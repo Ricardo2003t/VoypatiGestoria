@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>VoypatiGestoria — Tienda Online en Cuba</title>
+  <meta name="description" content="VoypatiGestoria: ferretería, celulares y accesorios, transporte, útiles del hogar, tecnología, electrodomésticos y artículos deportivos. Consulta y compra por WhatsApp." />
+  <meta name="keywords" content="tienda online Cuba, ferretería, celulares Cuba, electrodomésticos, tecnología, artículos deportivos, VoypatiGestoria" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://voypatigestoria.com/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="VoypatiGestoria — Tienda Online en Cuba" />
+  <meta property="og:description" content="Ferretería, celulares, transporte, hogar, tecnología, electrodomésticos y deportes. Todo en un solo lugar." />
+  <meta property="og:image" content="https://voypatigestoria.com/logo-voypati.webp" />
+  <meta property="og:url" content="https://voypatigestoria.com/" />
+  <meta property="og:locale" content="es_CU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="VoypatiGestoria — Tienda Online en Cuba" />
+  <meta name="twitter:description" content="Ferretería, celulares, transporte, hogar, tecnología, electrodomésticos y deportes." />
+  <meta name="theme-color" content="#f5820b" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VoypatiGestoria" />
+  <link rel="manifest" href="manifest.json" />
+  <!-- Fuentes: carga no bloqueante para conexiones lentas -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  </noscript>
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    (function(){
+      var s=localStorage.getItem('vp-theme');
+      var d=window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', s||(d?'dark':'light'));
+    })();
+  </script>
+</head>
+<body>
+
+<a class="skip-link" href="#catalogo-grid">Saltar al catálogo</a>
+
+<header id="header" role="banner">
+  <div class="header-inner">
+    <a class="header-logo" href="/" aria-label="VoypatiGestoria — Inicio">
+      <img
+        src="logo-voypati.webp"
+        alt="VoypatiGestoria"
+        class="logo-img"
+        width="40" height="40"
+      />
+      <div class="logo-text">
+        <span class="logo-name">Voypati</span>
+        <span class="logo-sub">Gestoria</span>
+      </div>
+    </a>
+
+    <div class="search-wrap" role="search">
+      <label for="buscador-desktop" class="sr-only">Buscar productos</label>
+      <svg class="search-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="buscador-desktop" class="buscador" placeholder="Buscar producto…" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Buscar productos" />
+      <button class="search-clear" id="clear-desktop" aria-label="Limpiar búsqueda" hidden>
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="header-actions">
+      <button class="btn-icon btn-theme" id="btn-theme" aria-label="Cambiar a modo oscuro" title="Cambiar tema">
+        <svg class="icon-sun" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="4"/>
+          <line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg class="icon-moon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <button class="btn-icon" id="btn-search-mobile" aria-label="Abrir buscador" aria-expanded="false">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+      <button class="btn-icon btn-menu" id="btn-menu" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobile-menu">
+        <span class="hamburger" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Buscador móvil dentro del header -->
+  <div class="mobile-search-bar" id="mobile-search-bar">
+    <div class="search-wrap">
+      <label for="buscador-mobile" class="sr-only">Buscar productos</label>
+      <svg class="search-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="buscador-mobile" class="buscador" placeholder="Buscar producto…" autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Buscar productos" />
+      <button class="search-clear" id="clear-mobile" aria-label="Limpiar búsqueda" hidden>
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="menu-overlay" id="menu-overlay" aria-hidden="true"></div>
+<nav class="mobile-menu" id="mobile-menu" aria-label="Menú principal" aria-hidden="true">
+  <div class="mobile-menu-header">
+    <span class="mobile-menu-title">VoypatiGestoria</span>
+    <button class="btn-icon" id="btn-close-menu" aria-label="Cerrar menú">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <ul class="mobile-menu-list" role="list">
+    <li><a href="#ofertas-section"   class="menu-link">🔥 Ofertas</a></li>
+    <li><a href="#catalogo-section"  class="menu-link">📦 Catálogo</a></li>
+    <li>
+      <a href="https://wa.me/5358474565" class="menu-link menu-link-wa" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.29-.15-1.7-.84-1.97-.93-.26-.1-.46-.15-.65.15-.2.29-.75.93-.92 1.12-.17.2-.34.22-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.77-1.45-1.72-1.61-2.02-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.48.1-.2.05-.36-.02-.51-.08-.15-.65-1.58-.9-2.16-.24-.58-.48-.5-.65-.51h-.56c-.2 0-.51.07-.78.36-.26.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.2 2.06 3.15 5 4.42.7.3 1.25.48 1.67.61.7.22 1.34.19 1.84.12.56-.08 1.7-.7 1.94-1.37.24-.68.24-1.26.17-1.38-.07-.13-.26-.2-.55-.34z"/><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18a7.94 7.94 0 0 1-4.06-1.11l-.29-.17-3 .79.8-2.92-.19-.3A7.95 7.95 0 1 1 12 20z"/></svg>
+        Contactar por WhatsApp
+      </a>
+    </li>
+    <li>
+      <a href="tel:+5358474565" class="menu-link">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02z"/></svg>
+        Contactar por Teléfono
+      </a>
+    </li>
+  </ul>
+</nav>
+
+<div id="filters-bar" role="navigation" aria-label="Filtrar por categoría">
+  <div class="filters-scroll" id="filters-scroll">
+    <button class="chip chip-categoria active chip-todos" data-categoria="todos" aria-pressed="true" aria-label="Todos">
+      <span class="chip-label">Todos</span>
+    </button>
+    <div class="filter-sep" aria-hidden="true"></div>
+    <button class="chip chip-categoria" data-categoria="ferreteria" aria-pressed="false" aria-label="Ferretería">
+      <img src="Filtros/Ferreteria.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+    <button class="chip chip-categoria" data-categoria="celulares" aria-pressed="false" aria-label="Celulares y accesorios">
+      <img src="Filtros/Celulares%20y%20Accesorios.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+    <button class="chip chip-categoria" data-categoria="transporte" aria-pressed="false" aria-label="Transporte">
+      <img src="Filtros/Transporte.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+    <button class="chip chip-categoria" data-categoria="hogar" aria-pressed="false" aria-label="Útiles del hogar">
+      <img src="Filtros/Utiles%20del%20Hogar.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+    <button class="chip chip-categoria" data-categoria="tecnologia" aria-pressed="false" aria-label="Tecnología">
+      <img src="Filtros/Tecnologia.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+    <button class="chip chip-categoria" data-categoria="electrodomesticos" aria-pressed="false" aria-label="Electrodomésticos">
+      <img src="Filtros/Electrodomesticos.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+    <button class="chip chip-categoria" data-categoria="deportivos" aria-pressed="false" aria-label="Deportivos">
+      <img src="Filtros/Deportivos.webp" alt="" class="chip-img" aria-hidden="true" />
+    </button>
+  </div>
+</div>
+
+<main id="main-content">
+
+  <!-- OFERTAS -->
+  <section id="ofertas-section" aria-labelledby="ofertas-title">
+    <div class="section-header">
+      <h2 class="section-title" id="ofertas-title"><span aria-hidden="true">🔥</span> Ofertas</h2>
+      <span class="section-badge badge-orange" aria-label="Ofertas por tiempo limitado">Limitadas</span>
+    </div>
+    <div class="carousel-wrap" role="region" aria-label="Carrusel de ofertas">
+      <button class="carousel-btn carousel-btn-prev" id="btn-prev" aria-label="Ver ofertas anteriores">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div id="carousel-track" role="list" aria-label="Productos en oferta"></div>
+      <button class="carousel-btn carousel-btn-next" id="btn-next" aria-label="Ver siguientes ofertas">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section id="catalogo-section" aria-labelledby="catalogo-title">
+    <div class="section-header">
+      <h2 class="section-title" id="catalogo-title">Catálogo</h2>
+      <span class="section-badge badge-blue" id="total-badge" aria-live="polite" aria-atomic="true"></span>
+    </div>
+    <div id="catalogo-grid" role="list" aria-label="Productos del catálogo"></div>
+    <div id="sentinel" aria-hidden="true">
+      <div class="spinner" id="spinner" role="status" aria-label="Cargando más productos"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL -->
+<div id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-nombre" aria-hidden="true">
+  <div id="modal" tabindex="-1">
+    <div class="modal-drag-handle" aria-hidden="true"></div>
+    <div class="modal-gallery" role="region" aria-label="Imágenes del producto">
+      <img id="modal-img" src="" alt="" loading="lazy" />
+      <div class="modal-dots" id="modal-dots" role="tablist" aria-label="Navegar imágenes"></div>
+      <button class="modal-close" id="modal-close" aria-label="Cerrar modal del producto">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-top-row">
+        <span class="modal-categoria-chip" id="modal-categoria"></span>
+        <span class="modal-disponibilidad" id="modal-disp"></span>
+      </div>
+      <h2 id="modal-nombre" class="modal-nombre"></h2>
+      <div class="modal-precios" id="modal-precios"></div>
+      <div class="modal-divider" aria-hidden="true"></div>
+      <p class="modal-desc-label">Descripción</p>
+      <p id="modal-desc" class="modal-desc"></p>
+      <a id="btn-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn-wa" aria-label="Consultar disponibilidad por WhatsApp">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.29-.15-1.7-.84-1.97-.93-.26-.1-.46-.15-.65.15-.2.29-.75.93-.92 1.12-.17.2-.34.22-.63.08-.29-.15-1.23-.45-2.34-1.44-.86-.77-1.45-1.72-1.61-2.02-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.48.1-.2.05-.36-.02-.51-.08-.15-.65-1.58-.9-2.16-.24-.58-.48-.5-.65-.51h-.56c-.2 0-.51.07-.78.36-.26.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.2 2.06 3.15 5 4.42.7.3 1.25.48 1.67.61.7.22 1.34.19 1.84.12.56-.08 1.7-.7 1.94-1.37.24-.68.24-1.26.17-1.38-.07-.13-.26-.2-.55-.34z"/><path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.06-1.33A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18a7.94 7.94 0 0 1-4.06-1.11l-.29-.17-3 .79.8-2.92-.19-.3A7.95 7.95 0 1 1 12 20z"/></svg>
+        Consultar por WhatsApp
+      </a>
+      <a id="btn-call-modal" href="tel:+5358474565" class="btn-call" aria-label="Llamar a VoypatiGestoria">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02z"/></svg>
+        Consultar por teléfono
+      </a>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<button id="scroll-top" aria-label="Volver arriba" hidden>
+  <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="18 15 12 9 6 15"/>
+  </svg>
+</button>
+
+<script defer src="supabase-config.js"></script>
+<script defer src="script.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>

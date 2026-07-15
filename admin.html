@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Panel de administración — VoypatiGestoria</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <script>
+    (function(){
+      var s=localStorage.getItem('vp-theme');
+      var d=window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', s||(d?'dark':'light'));
+    })();
+  </script>
+</head>
+<body>
+
+<!-- ═══ PANTALLA DE LOGIN ═══ -->
+<div id="login-screen" class="admin-screen">
+  <form id="login-form" class="login-card">
+    <img src="logo-voypati.webp" alt="" class="login-logo" width="56" height="56" />
+    <h1 class="login-title">Panel de administración</h1>
+    <p class="login-sub">Inicia sesión para gestionar tu catálogo</p>
+
+    <label class="admin-label" for="login-email">Correo</label>
+    <input class="admin-input" type="email" id="login-email" autocomplete="username" required />
+
+    <label class="admin-label" for="login-password">Contraseña</label>
+    <input class="admin-input" type="password" id="login-password" autocomplete="current-password" required />
+
+    <button type="submit" class="admin-btn admin-btn-primary" id="login-btn">Entrar</button>
+    <p id="login-error" class="admin-error" hidden></p>
+  </form>
+</div>
+
+<!-- ═══ PANEL PRINCIPAL (oculto hasta iniciar sesión) ═══ -->
+<div id="panel-screen" class="admin-screen" hidden>
+  <header class="admin-header">
+    <div class="admin-header-inner">
+      <div class="admin-header-brand">
+        <img src="logo-voypati.webp" alt="" class="admin-header-logo" width="32" height="32" />
+        <span id="negocio-nombre">Mi negocio</span>
+      </div>
+      <div class="admin-header-actions">
+        <a href="index.html" target="_blank" class="admin-btn admin-btn-ghost">Ver tienda ↗</a>
+        <button id="btn-logout" class="admin-btn admin-btn-ghost">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="admin-toolbar">
+      <h2 class="admin-section-title">Mis productos</h2>
+      <button id="btn-nuevo" class="admin-btn admin-btn-primary">+ Agregar producto</button>
+    </div>
+
+    <p id="admin-status" class="admin-status" hidden></p>
+
+    <div id="admin-grid" class="admin-grid" aria-label="Lista de productos"></div>
+    <p id="admin-empty" class="admin-empty" hidden>Todavía no tienes productos. Agrega el primero.</p>
+  </main>
+</div>
+
+<!-- ═══ MODAL: AGREGAR / EDITAR PRODUCTO ═══ -->
+<div id="form-overlay" class="admin-overlay" hidden>
+  <form id="producto-form" class="admin-form-card">
+    <div class="admin-form-header">
+      <h3 id="form-title">Agregar producto</h3>
+      <button type="button" id="form-close" class="admin-btn-icon" aria-label="Cerrar">✕</button>
+    </div>
+
+    <input type="hidden" id="f-id" />
+
+    <label class="admin-label" for="f-nombre">Nombre del producto *</label>
+    <input class="admin-input" id="f-nombre" required maxlength="120" />
+
+    <label class="admin-label" for="f-categoria">Categoría *</label>
+    <select class="admin-input" id="f-categoria" required>
+      <option value="">Selecciona…</option>
+      <option value="ferreteria">Ferretería</option>
+      <option value="celulares">Celulares y accesorios</option>
+      <option value="transporte">Transporte</option>
+      <option value="hogar">Útiles del hogar</option>
+      <option value="tecnologia">Tecnología</option>
+      <option value="electrodomesticos">Electrodomésticos</option>
+      <option value="deportivos">Deportivos</option>
+    </select>
+
+    <div class="admin-row">
+      <div>
+        <label class="admin-label" for="f-precio">Precio ($) *</label>
+        <input class="admin-input" type="number" id="f-precio" min="0" step="0.01" required />
+      </div>
+      <div>
+        <label class="admin-label" for="f-precio-og">Precio antes (opcional)</label>
+        <input class="admin-input" type="number" id="f-precio-og" min="0" step="0.01" />
+      </div>
+    </div>
+
+    <label class="admin-label" for="f-descripcion">Descripción</label>
+    <textarea class="admin-input" id="f-descripcion" rows="4" maxlength="1000"></textarea>
+
+    <div class="admin-row admin-row-checks">
+      <label class="admin-check"><input type="checkbox" id="f-disponible" checked /> Disponible</label>
+      <label class="admin-check"><input type="checkbox" id="f-oferta" /> En oferta</label>
+    </div>
+
+    <label class="admin-label" for="f-imagen">Foto del producto</label>
+    <input class="admin-input" type="file" id="f-imagen" accept="image/*" />
+    <p class="admin-hint">Se comprime y convierte a WebP automáticamente antes de subirse.</p>
+    <img id="f-preview" class="admin-preview" hidden alt="Vista previa" />
+
+    <p id="form-error" class="admin-error" hidden></p>
+
+    <div class="admin-form-footer">
+      <button type="button" id="form-cancel" class="admin-btn admin-btn-ghost">Cancelar</button>
+      <button type="submit" id="form-submit" class="admin-btn admin-btn-primary">Guardar producto</button>
+    </div>
+  </form>
+</div>
+
+<div id="admin-toast" class="admin-toast" role="status" aria-live="polite"></div>
+
+<script defer src="supabase-config.js"></script>
+<script defer src="admin.js"></script>
+</body>
+</html>
