@@ -741,6 +741,67 @@ button, a, [role="button"] {
 @media (min-width: 1024px) { #catalogo-grid { grid-template-columns: repeat(4, 1fr); } }
 @media (min-width: 1280px) { #catalogo-grid { grid-template-columns: repeat(5, 1fr); gap: 14px; padding: 0 14px 14px; } }
 
+/* ── SEPARADORES DE CATEGORÍA EN EL CATÁLOGO ─────────────────── */
+.catalogo-seccion {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 18px 4px 8px;
+  scroll-margin-top: calc(var(--header-h) + var(--sat) + 70px);
+}
+.catalogo-seccion:first-child { margin-top: 4px; }
+.catalogo-seccion-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.catalogo-seccion-titulo {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -.3px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.catalogo-seccion-linea {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Barra de sección actual (se muestra al bajar por el catálogo) */
+.seccion-actual {
+  position: sticky;
+  top: calc(var(--header-h) + var(--sat));
+  z-index: 85;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 8px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  box-shadow: var(--shadow-sm);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  transform: translateY(-8px);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .2s var(--ease), opacity .2s ease;
+}
+.seccion-actual.visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+.seccion-actual-dot {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
 /* Tarjeta producto */
 .p-card {
   background: var(--bg-card);

@@ -118,6 +118,7 @@ const state = {
   filteredProducts: [],
   currentPage:      0,
   isLoading:        false,
+  showSeparators:   false,
   modalProduct:     null,
   modalImgIdx:      0,
 };
@@ -215,6 +216,7 @@ const applyStateFromURL = () => {
   }
   resetFiltersUI();
   state.filteredProducts = [...productos];
+  state.showSeparators = true;
   renderCatalogo();
 };
 
@@ -242,6 +244,7 @@ const filterByCategoria = categoria => {
   state.filteredProducts = categoria === 'todos'
     ? [...productos]
     : productos.filter(p => p.categoria === categoria);
+  state.showSeparators = categoria === 'todos';
   renderCatalogo();
 };
 
@@ -281,9 +284,11 @@ const getSimilarProducts = query => {
 const filterBySearch = query => {
   if (!query.trim()) {
     state.filteredProducts = [...productos];
+    state.showSeparators = true;
     renderCatalogo();
     return;
   }
+  state.showSeparators = false;
   const results = productos
     .map(p => ({ p, score: fuzzyScore(p, query) }))
     .filter(({ score }) => score > 0)
@@ -385,9 +390,26 @@ sentinelObserver.observe($('sentinel'));
 /* ── RENDER CATÁLOGO ───────────────────────────────────────── */
 let lastSearchQuery = '';
 
+/* Encabezado de sección (separador) por categoría, con un id para
+   localizarlo al hacer scroll y marcar la sección activa. */
+const createSectionHeader = cat => {
+  const meta = CATEGORIAS[cat] || { label: cat, color: 'var(--accent)' };
+  const header = document.createElement('div');
+  header.className = 'catalogo-seccion';
+  header.id = `seccion-${cat}`;
+  header.dataset.categoria = cat;
+  header.innerHTML = `
+    <span class="catalogo-seccion-dot" style="background:${meta.color}"></span>
+    <h3 class="catalogo-seccion-titulo">${meta.label}</h3>
+    <span class="catalogo-seccion-linea"></span>
+  `;
+  return header;
+};
+
 const renderCatalogo = () => {
   state.currentPage = 0;
-  $('catalogo-grid').innerHTML = '';
+  const grid = $('catalogo-grid');
+  grid.innerHTML = '';
   $('sentinel').style.display  = 'flex';
 
   $('total-badge').textContent = `${state.filteredProducts.length} producto${state.filteredProducts.length !== 1 ? 's' : ''}`;
@@ -397,7 +419,71 @@ const renderCatalogo = () => {
     return;
   }
 
+  /* Con separadores: agrupamos por categoría (en orden lógico) y pintamos
+     un encabezado antes de cada grupo. Se renderiza de una vez porque el
+     catálogo es acotado y así evitamos saltos de layout. */
+  if (state.showSeparators) {
+    const frag = document.createDocumentFragment();
+    CATEGORIA_ORDER.forEach(cat => {
+      const grupo = state.filteredProducts.filter(p => p.categoria === cat);
+      if (!grupo.length) return;
+      frag.appendChild(createSectionHeader(cat));
+      grupo.forEach(p => frag.appendChild(createCard(p)));
+    });
+    grid.appendChild(frag);
+    observeLazyImages();
+    $('sentinel').style.display = 'none';
+    setupSeccionObserver();
+    return;
+  }
+
   loadNextPage();
+};
+
+/* Barra de sección activa: resalta en qué categoría se encuentra el
+   usuario al bajar por el catálogo. Se calcula con scroll + rAF (sin
+   getBoundingClientRect por elemento en cada frame, evitando lag). */
+const setupSeccionObserver = () => {
+  const barra = $('seccion-actual');
+  const texto = barra.querySelector('.seccion-actual-texto');
+  const dot   = barra.querySelector('.seccion-actual-dot');
+  const headers = $$('.catalogo-seccion');
+
+  if (!headers.length) { barra.hidden = true; return; }
+
+  const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 62;
+  const sat = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
+  const top = headerH + sat + 60;
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    const y = window.scrollY + top;
+    let activa = headers[0];
+    for (const h of headers) {
+      if (h.offsetTop <= y) activa = h; else break;
+    }
+    const meta = CATEGORIAS[activa.dataset.categoria] || { label: activa.dataset.categoria, color: 'var(--accent)' };
+    texto.textContent = meta.label;
+    dot.style.background = meta.color;
+
+    if (window.scrollY < top - 20) {
+      barra.classList.remove('visible');
+      barra.hidden = true;
+    } else {
+      barra.hidden = false;
+      barra.classList.add('visible');
+    }
+  };
+
+  if (!setupSeccionObserver._bound) {
+    setupSeccionObserver._bound = true;
+    window.addEventListener('scroll', () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    window.addEventListener('resize', update, { passive: true });
+  }
+  update();
 };
 
 /* ── CARRUSEL DE OFERTAS ───────────────────────────────────── */
@@ -593,6 +679,7 @@ const handleSearch = (valor, id) => {
     resetFiltersUI();
     pushState({});
     state.filteredProducts = [...productos];
+    state.showSeparators = true;
     renderCatalogo();
     return;
   }
@@ -748,17 +835,6 @@ if (stickyClear) {
     stickyInput.focus();
   });
 }
-
-let scrollTicking = false;
-window.addEventListener('scroll', () => {
-  if (!scrollTicking) {
-    requestAnimationFrame(() => {
-      updateSearchVisibility();
-      scrollTicking = false;
-    });
-    scrollTicking = true;
-  }
-}, { passive: true });
 
 /* ── INIT ──────────────────────────────────────────────────── */
 const init = async () => {
