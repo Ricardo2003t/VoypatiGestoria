@@ -354,45 +354,54 @@ textarea.admin-input { resize: vertical; }
 
 .admin-filters {
   display: flex;
+  flex-direction: column;
   gap: 10px;
   margin-bottom: 18px;
-  flex-wrap: wrap;
 }
 
 .admin-search-wrap {
   position: relative;
-  flex: 1 1 200px;
-  min-width: 0;
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .admin-search-icon {
-  position: relative;
-  left: auto;
-  top: auto;
-  transform: none;
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
   width: 16px; height: 16px;
   color: var(--text-muted);
   pointer-events: none;
   flex-shrink: 0;
-  margin-left: 12px;
-  margin-right: 8px;
 }
 
 .admin-search {
   width: 100%;
-  padding-left: 12px;
+  padding-left: 38px;
+  padding-right: 12px;
 }
 
 .admin-filtro {
-  flex: 0 0 auto;
-  min-width: 160px;
+  width: 100%;
+  min-width: 0;
 }
 
-@media (max-width: 479px) {
-  .admin-filters { flex-direction: column; }
-  .admin-filtro { width: 100%; }
+@media (min-width: 640px) {
+  .admin-filters {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .admin-search-wrap {
+    flex: 1;
+  }
+  .admin-filtro {
+    width: auto;
+    min-width: 200px;
+    flex-shrink: 0;
+  }
 }
 
 .admin-empty {
