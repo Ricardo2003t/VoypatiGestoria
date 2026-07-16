@@ -305,12 +305,10 @@ const filterBySearch = query => {
 
 /* ── SINCRONIZAR BUSCADORES ─────────────────────────────────── */
 const syncBuscadores = (valor, origenId) => {
-  ['buscador-desktop', 'buscador-mobile'].forEach(id => {
-    const el = $(id);
-    if (el && el.id !== origenId) el.value = valor;
-  });
-  $('clear-desktop').hidden = !$('buscador-desktop').value;
-  $('clear-mobile').hidden  = !$('buscador-mobile').value;
+  const desktop = $('buscador-desktop');
+  if (desktop && desktop.id !== origenId) desktop.value = valor;
+  const clearDesktop = $('clear-desktop');
+  if (clearDesktop) clearDesktop.hidden = !valor;
 };
 
 /* ── RENDER TARJETA PRODUCTO ────────────────────────────────── */
@@ -611,26 +609,15 @@ const handleSearch = (valor, id) => {
 $('buscador-desktop').addEventListener('keyup', function () {
   handleSearch(this.value, this.id);
 });
-$('buscador-mobile').addEventListener('keyup', function () {
-  handleSearch(this.value, this.id);
-});
 
 $('clear-desktop').addEventListener('click', () => {
   $('buscador-desktop').value = '';
   handleSearch('', 'buscador-desktop');
   $('buscador-desktop').focus();
 });
-$('clear-mobile').addEventListener('click', () => {
-  $('buscador-mobile').value = '';
-  handleSearch('', 'buscador-mobile');
-  $('buscador-mobile').focus();
-});
 
-['buscador-desktop', 'buscador-mobile'].forEach(id => {
-  $(id).addEventListener('input', function () {
-    const clearId = id === 'buscador-desktop' ? 'clear-desktop' : 'clear-mobile';
-    $(clearId).hidden = !this.value;
-  });
+$('buscador-desktop').addEventListener('input', function () {
+  $('clear-desktop').hidden = !this.value;
 });
 
 /* ── EVENTOS FILTROS ────────────────────────────────────────── */
@@ -648,15 +635,6 @@ $('filters-scroll').addEventListener('click', e => {
     pushState(categoria !== 'todos' ? { categoria } : {});
     filterByCategoria(categoria);
   }
-});
-
-/* ── BUSCADOR MÓVIL TOGGLE ─────────────────────────────────── */
-$('btn-search-mobile').addEventListener('click', function () {
-  const bar    = $('mobile-search-bar');
-  const isOpen = bar.classList.toggle('open');
-  this.setAttribute('aria-expanded', isOpen);
-  bar.setAttribute('aria-hidden', !isOpen);
-  if (isOpen) setTimeout(() => $('buscador-mobile').focus(), 320);
 });
 
 /* ── MENÚ HAMBURGER ─────────────────────────────────────────── */
@@ -761,8 +739,9 @@ const stickyClear = $('clear-sticky');
 const updateSearchVisibility = () => {
   if (!filtersBar || !stickySearchBar) return;
 
-  const filtersBottom = filtersBar.offsetTop + filtersBar.offsetHeight;
-  const shouldShow = window.scrollY > filtersBottom - 10;
+  const rect = filtersBar.getBoundingClientRect();
+  const filtersBottom = rect.bottom;
+  const shouldShow = window.scrollY + rect.height > filtersBottom - 10;
 
   if (shouldShow) {
     stickySearchBar.classList.add('visible');
