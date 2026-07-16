@@ -1,9 +1,20 @@
 /* ════════════════════════════════════════════════════════════════
-    ADMIN.JS — Panel de administración VoypatiGestoria
-    Vanilla JS + fetch nativo (sin SDK de Supabase, 0 KB de librerías)
+     ADMIN.JS — Panel de administración VoypatiGestoria
+     Vanilla JS + fetch nativo (sin SDK de Supabase, 0 KB de librerías)
 ════════════════════════════════════════════════════════════════ */
 
 'use strict';
+
+/* ── POLYFILL: crypto.randomUUID para Safari < 15.4 ───────────── */
+if (typeof crypto !== 'undefined' && !crypto.randomUUID) {
+  crypto.randomUUID = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+}
 
 const SESSION_KEY = 'vp_admin_session';
 const IMG_MAX_DIM = 900;
@@ -50,7 +61,8 @@ const showToast = msg => {
 /* ── SESIÓN: guardar / leer / borrar ───────────────────────────── */
 const guardarSesion = s => {
   session = s;
-  localStorage.setItem(SESSION_KEY, JSON.stringify(s));
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
+  catch (e) { console.warn('[admin] localStorage no disponible (¿modo privado?):', e); }
 };
 const leerSesionGuardada = () => {
   try { return JSON.parse(localStorage.getItem(SESSION_KEY)); }
@@ -58,7 +70,8 @@ const leerSesionGuardada = () => {
 };
 const borrarSesion = () => {
   session = null;
-  localStorage.removeItem(SESSION_KEY);
+  try { localStorage.removeItem(SESSION_KEY); }
+  catch (e) { /* modo privado: no hay nada que borrar */ }
 };
 
 const requireSession = () => {

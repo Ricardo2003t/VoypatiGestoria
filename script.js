@@ -1,9 +1,20 @@
 /* ════════════════════════════════════════════════════════════════
-    VOYPATIGESTORIA — script.js
-    Vanilla ES6+ · Mobile-First · PWA
+     VOYPATIGESTORIA — script.js
+     Vanilla ES6+ · Mobile-First · PWA
 ════════════════════════════════════════════════════════════════ */
 
 'use strict';
+
+/* ── POLYFILL: crypto.randomUUID para Safari < 15.4 ───────────── */
+if (typeof crypto !== 'undefined' && !crypto.randomUUID) {
+  crypto.randomUUID = () => {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = (Math.random() * 16) | 0;
+      const v = c === 'x' ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+}
 
 /* ── CONFIGURACIÓN ──────────────────────────────────────────── */
 const CONFIG = {
@@ -70,7 +81,11 @@ const cargarProductos = async () => {
     `&cliente_id=eq.${CLIENTE_ID}&order=created_at.desc`;
 
   try {
-    const res = await fetch(url, { headers: supaHeadersPublic() });
+    const res = await fetch(url, {
+      headers: supaHeadersPublic(),
+      mode: 'cors',
+      cache: 'no-store'
+    });
     console.log('[index] cargarProductos status:', res.status);
     if (!res.ok) {
       const txt = await res.text();
@@ -80,11 +95,13 @@ const cargarProductos = async () => {
     const data = await res.json();
     console.log('[index] cargarProductos count:', data.length);
     productos = data.map(mapProducto);
-    localStorage.setItem(CACHE_KEY, JSON.stringify(productos));
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(productos)); } catch (e) { console.warn('[index] localStorage setItem failed:', e); }
   } catch (err) {
     console.error('[index] cargarProductos fallback:', err.message);
-    const cached = localStorage.getItem(CACHE_KEY);
-    productos = cached ? JSON.parse(cached) : [];
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      productos = cached ? JSON.parse(cached) : [];
+    } catch (e) { productos = []; }
   }
 };
 
@@ -688,7 +705,7 @@ $('scroll-top').addEventListener('click', () =>
 /* ── DARK MODE ──────────────────────────────────────────────── */
 const applyTheme = theme => {
   document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('vp-theme', theme);
+  try { localStorage.setItem('vp-theme', theme); } catch (e) { /* modo privado: no persiste, no pasa nada */ }
 
   const btn = $('btn-theme');
   if (!btn) return;
@@ -710,7 +727,9 @@ const btnTheme = $('btn-theme');
 if (btnTheme) btnTheme.addEventListener('click', toggleTheme);
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-  if (!localStorage.getItem('vp-theme')) {
+  let saved = null;
+  try { saved = localStorage.getItem('vp-theme'); } catch (err) { /* modo privado */ }
+  if (!saved) {
     applyTheme(e.matches ? 'dark' : 'light');
   }
 });

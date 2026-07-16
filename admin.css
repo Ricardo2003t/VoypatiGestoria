@@ -24,6 +24,7 @@
 #register-screen[hidden] { display: none; }
 #panel-screen[hidden]  { display: none; }
 #form-overlay[hidden]  { display: none; }
+[hidden] { display: none !important; }
 
 .login-card {
   width: 100%;
@@ -85,7 +86,11 @@
 .admin-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+@supports (color: color-mix(in srgb, red 50%, transparent)) {
+  .admin-input:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+  }
 }
 
 textarea.admin-input { resize: vertical; }
@@ -416,6 +421,7 @@ textarea.admin-input { resize: vertical; }
   .login-logo {
     width: 40px; height: 40px;
     margin-bottom: 10px;
+    border-radius: 50%;
   }
 
   .login-title {
@@ -475,6 +481,7 @@ textarea.admin-input { resize: vertical; }
 
   .admin-header-logo {
     width: 28px; height: 28px;
+    border-radius: 50%;
   }
 
   .admin-header-actions {

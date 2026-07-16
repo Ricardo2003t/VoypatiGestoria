@@ -23,6 +23,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="VoypatiGestoria" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <!-- Fuentes: carga no bloqueante para conexiones lentas -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -34,9 +37,13 @@
   <link rel="stylesheet" href="style.css" />
   <script>
     (function(){
-      var s=localStorage.getItem('vp-theme');
-      var d=window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-theme', s||(d?'dark':'light'));
+      try {
+        var s = localStorage.getItem('vp-theme');
+        var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.setAttribute('data-theme', s || (d ? 'dark' : 'light'));
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
     })();
   </script>
 </head>
@@ -133,7 +140,7 @@
       </a>
     </li>
     <li>
-      <a href="tel:+5358474565" class="menu-link">
+      <a href="tel:+5358474565" class="menu-link menu-link-tel">
         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24 11.36 11.36 0 0 0 3.57.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.36 11.36 0 0 0 .57 3.57 1 1 0 0 1-.25 1.02z"/></svg>
         Contactar por Teléfono
       </a>
@@ -148,25 +155,25 @@
     </button>
     <div class="filter-sep" aria-hidden="true"></div>
     <button class="chip chip-categoria" data-categoria="ferreteria" aria-pressed="false" aria-label="Ferretería">
-      <img src="Filtros/Ferreteria.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Ferreteria.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
     <button class="chip chip-categoria" data-categoria="celulares" aria-pressed="false" aria-label="Celulares y accesorios">
-      <img src="Filtros/Celulares%20y%20Accesorios.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Celulares%20y%20Accesorios.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
     <button class="chip chip-categoria" data-categoria="transporte" aria-pressed="false" aria-label="Transporte">
-      <img src="Filtros/Transporte.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Transporte.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
     <button class="chip chip-categoria" data-categoria="hogar" aria-pressed="false" aria-label="Útiles del hogar">
-      <img src="Filtros/Utiles%20del%20Hogar.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Utiles%20del%20Hogar.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
     <button class="chip chip-categoria" data-categoria="tecnologia" aria-pressed="false" aria-label="Tecnología">
-      <img src="Filtros/Tecnologia.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Tecnologia.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
     <button class="chip chip-categoria" data-categoria="electrodomesticos" aria-pressed="false" aria-label="Electrodomésticos">
-      <img src="Filtros/Electrodomesticos.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Electrodomesticos.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
     <button class="chip chip-categoria" data-categoria="deportivos" aria-pressed="false" aria-label="Deportivos">
-      <img src="Filtros/Deportivos.webp" alt="" class="chip-img" aria-hidden="true" />
+      <img src="Filtros/Deportivos.webp" alt="" class="chip-img" aria-hidden="true" onerror="this.style.display='none'" />
     </button>
   </div>
 </div>

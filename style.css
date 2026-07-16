@@ -192,6 +192,12 @@ button, a, [role="button"] {
   color: #fff;
 }
 .logo-icon svg { width: 18px; height: 18px; }
+.logo-img {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
 .logo-text {
   display: flex; flex-direction: column;
   line-height: 1.1;
@@ -361,6 +367,14 @@ button, a, [role="button"] {
   padding-top: 18px;
 }
 .menu-link-wa svg { width: 20px; height: 20px; flex-shrink: 0; }
+.menu-link-tel {
+  color: var(--accent);
+  font-weight: 600;
+  margin-top: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.menu-link-tel svg { width: 20px; height: 20px; flex-shrink: 0; }
 
 @media (max-width: 359px) {
   .mobile-menu-header { padding: 16px 14px 14px; }
@@ -373,6 +387,10 @@ button, a, [role="button"] {
     min-height: 48px;
   }
   .menu-link-wa {
+    margin-top: 6px;
+    padding-top: 14px;
+  }
+  .menu-link-tel {
     margin-top: 6px;
     padding-top: 14px;
   }
@@ -1386,6 +1404,7 @@ body.modal-open {
   .header-logo { gap: 0; }
   .logo-icon { width: 32px; height: 32px; }
   .logo-icon svg { width: 16px; height: 16px; }
+  .logo-img { width: 32px; height: 32px; }
   
   .btn-icon { width: 34px; height: 34px; min-width: 34px; min-height: 34px; }
   .btn-icon svg { width: 18px; height: 18px; }
@@ -1466,6 +1485,7 @@ body.modal-open {
   .header-logo { gap: 0; }
   .logo-icon { width: 32px; height: 32px; }
   .logo-icon svg { width: 16px; height: 16px; }
+  .logo-img { width: 32px; height: 32px; }
   
   .btn-icon { width: 34px; height: 34px; min-width: 34px; min-height: 34px; }
   .btn-icon svg { width: 18px; height: 18px; }
