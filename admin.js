@@ -17,6 +17,27 @@ let productos = [];
 let editandoId = null;
 let archivoSeleccionado = null;
 let imagenUrlOriginal = null;
+let scrollY = 0;
+
+/* ── SCROLL LOCK iOS/Android ───────────────────────────────── */
+const lockScroll = () => {
+  scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.overflow = 'hidden';
+  document.body.classList.add('admin-modal-open');
+};
+const unlockScroll = () => {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.overflow = '';
+  document.body.classList.remove('admin-modal-open');
+  window.scrollTo(0, scrollY);
+};
 
 /* ── TOAST ──────────────────────────────────────────────────── */
 const showToast = msg => {
@@ -323,6 +344,7 @@ const abrirForm = (producto = null) => {
   }
 
   $('form-overlay').hidden = false;
+  lockScroll();
 };
 
 const cerrarForm = () => {
@@ -330,6 +352,7 @@ const cerrarForm = () => {
   editandoId = null;
   archivoSeleccionado = null;
   imagenUrlOriginal = null;
+  unlockScroll();
 };
 
 $('f-imagen').addEventListener('change', e => {

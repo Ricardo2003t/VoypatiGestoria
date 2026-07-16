@@ -427,7 +427,7 @@ const buildCarousel = () => {
   const getScrollAmount = () => {
     const firstCard = track.querySelector('.c-card');
     if (!firstCard) return 200;
-    return (firstCard.offsetWidth + 10) * 2;
+    return (firstCard.offsetWidth + 8) * 2;
   };
 
   $('btn-prev').addEventListener('click', () =>
