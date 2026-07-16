@@ -362,9 +362,11 @@ textarea.admin-input { resize: vertical; }
 /* ── GRID DE PRODUCTOS ──────────────────────────────────────── */
 .admin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
 }
+
+@media (min-width: 480px)  { .admin-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); } }
 
 .admin-card {
   background: var(--bg-card);
