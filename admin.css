@@ -21,6 +21,9 @@
    estilo nativo de [hidden], y la pantalla de login nunca desaparece
    de verdad aunque JS le ponga hidden = true. */
 #login-screen[hidden] { display: none; }
+#register-screen[hidden] { display: none; }
+#panel-screen[hidden]  { display: none; }
+#form-overlay[hidden]  { display: none; }
 
 .login-card {
   width: 100%;

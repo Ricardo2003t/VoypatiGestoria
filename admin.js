@@ -1,21 +1,22 @@
 /* ════════════════════════════════════════════════════════════════
-   ADMIN.JS — Panel de administración VoypatiGestoria
-   Vanilla JS + fetch nativo (sin SDK de Supabase, 0 KB de librerías)
+    ADMIN.JS — Panel de administración VoypatiGestoria
+    Vanilla JS + fetch nativo (sin SDK de Supabase, 0 KB de librerías)
 ════════════════════════════════════════════════════════════════ */
 
 'use strict';
 
 const SESSION_KEY = 'vp_admin_session';
-const IMG_MAX_DIM = 900;   // px — lado más largo de la foto ya comprimida
-const IMG_QUALITY = 0.8;   // calidad WebP (0–1)
+const IMG_MAX_DIM = 900;
+const IMG_QUALITY = 0.8;
 
 const $ = id => document.getElementById(id);
 
 /* ── ESTADO ─────────────────────────────────────────────────── */
-let session   = null;   // { access_token, refresh_token, uid, email }
-let productos = [];     // productos del negocio logueado
-let editandoId = null;  // id del producto en edición (null = alta nueva)
-let archivoSeleccionado = null; // File original elegido en el form
+let session   = null;
+let productos = [];
+let editandoId = null;
+let archivoSeleccionado = null;
+let imagenUrlOriginal = null;
 
 /* ── TOAST ──────────────────────────────────────────────────── */
 const showToast = msg => {
@@ -39,9 +40,6 @@ const borrarSesion = () => {
   localStorage.removeItem(SESSION_KEY);
 };
 
-/* Si por lo que sea (sesión vencida, error de carga, etc.) se intenta
-   hacer una acción sin sesión activa, avisamos claro y devolvemos al
-   login en vez de dejar que reviente con un error críptico. */
 const requireSession = () => {
   if (session) return true;
   showToast('Tu sesión no está activa. Inicia sesión de nuevo.');
@@ -58,8 +56,14 @@ const login = async (email, password) => {
     headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error_description || data.msg || 'Correo o contraseña incorrectos');
+  const txt = await res.text();
+  console.log('[admin] login status:', res.status, 'body:', txt);
+  let data;
+  try { data = JSON.parse(txt); } catch { data = {}; }
+  if (!res.ok) {
+    const msg = data.error_description || data.msg || data.message || txt || 'Correo o contraseña incorrectos';
+    throw new Error(msg);
+  }
 
   guardarSesion({
     access_token:  data.access_token,
@@ -83,8 +87,6 @@ const refrescarSesion = async () => {
   return true;
 };
 
-/* Envoltorio de fetch autenticado: si el token venció (401), refresca
-   una vez y reintenta. Evita que al cliente le boten sin avisar. */
 const authFetch = async (url, options = {}) => {
   const doFetch = () => fetch(url, {
     ...options,
@@ -93,6 +95,9 @@ const authFetch = async (url, options = {}) => {
   let res = await doFetch();
   if (res.status === 401 && await refrescarSesion()) {
     res = await doFetch();
+  }
+  if (!res.ok) {
+    console.error('[admin] authFetch error:', res.status, url);
   }
   return res;
 };
@@ -120,12 +125,25 @@ const cargarProductos = async () => {
 };
 
 const crearProducto = async payload => {
+  const body = JSON.stringify({ ...payload, cliente_id: session.uid });
+  console.log('[admin] crearProducto session.uid:', session.uid);
+  console.log('[admin] crearProducto payload:', body);
   const res = await authFetch(`${SUPABASE_URL}/rest/v1/productos`, {
     method: 'POST',
     headers: { 'Prefer': 'return=representation' },
-    body: JSON.stringify({ ...payload, cliente_id: session.uid }),
+    body,
   });
-  if (!res.ok) throw new Error((await res.json()).message || 'No se pudo crear el producto');
+
+  if (!res.ok) {
+    const txt = await res.text();
+    console.log('[admin] crearProducto error status:', res.status, 'body:', txt);
+    let msg = 'No se pudo crear el producto';
+    try {
+      const err = JSON.parse(txt);
+      msg = err.message || err.msg || err.details || JSON.stringify(err) || msg;
+    } catch { msg = txt || `HTTP ${res.status}`; }
+    throw new Error(msg);
+  }
   return res.json();
 };
 
@@ -143,13 +161,12 @@ const borrarProducto = async producto => {
   });
   if (!res.ok) throw new Error('No se pudo eliminar el producto');
 
-  // Limpieza best-effort de la foto en Storage (si falla, no bloquea el borrado)
   if (producto.imagen_url) {
     const path = extraerPathStorage(producto.imagen_url);
     if (path) {
-      authFetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}`, {
+      fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`, {
         method: 'DELETE',
-        body: JSON.stringify({ prefixes: [path] }),
+        headers: supaHeadersAuth(session.access_token),
       }).catch(() => {});
     }
   }
@@ -161,7 +178,7 @@ const extraerPathStorage = url => {
   return i === -1 ? null : url.slice(i + marker.length);
 };
 
-/* ── COMPRESIÓN DE FOTO A WEBP (canvas, sin librerías) ─────────── */
+/* ── COMPRESIÓN DE FOTO A WEBP ──────────────────────────────── */
 const comprimirAWebp = file => new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.onerror = () => reject(new Error('No se pudo leer la imagen'));
@@ -192,7 +209,6 @@ const comprimirAWebp = file => new Promise((resolve, reject) => {
   reader.readAsDataURL(file);
 });
 
-/* Sube el blob ya comprimido y devuelve la URL pública */
 const subirFoto = async blob => {
   const nombreArchivo = `${crypto.randomUUID()}.webp`;
   const path = `${session.uid}/${nombreArchivo}`;
@@ -206,7 +222,14 @@ const subirFoto = async blob => {
     },
     body: blob,
   });
-  if (!res.ok) throw new Error('No se pudo subir la foto');
+  if (!res.ok) {
+    let msg = 'No se pudo subir la foto';
+    try {
+      const err = await res.json();
+      msg = err.message || err.msg || JSON.stringify(err) || msg;
+    } catch { msg = `HTTP ${res.status}`; }
+    throw new Error(msg);
+  }
 
   return `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}`;
 };
@@ -277,6 +300,7 @@ const confirmarBorrado = async producto => {
 const abrirForm = (producto = null) => {
   editandoId = producto?.id ?? null;
   archivoSeleccionado = null;
+  imagenUrlOriginal = producto?.imagen_url ?? null;
 
   $('form-title').textContent = producto ? 'Editar producto' : 'Agregar producto';
   $('f-id').value          = producto?.id ?? '';
@@ -303,6 +327,9 @@ const abrirForm = (producto = null) => {
 
 const cerrarForm = () => {
   $('form-overlay').hidden = true;
+  editandoId = null;
+  archivoSeleccionado = null;
+  imagenUrlOriginal = null;
 };
 
 $('f-imagen').addEventListener('change', e => {
@@ -351,6 +378,15 @@ $('producto-form').addEventListener('submit', async e => {
     submitBtn.textContent = 'Guardando…';
 
     if (editandoId) {
+      if (imagenUrlOriginal && archivoSeleccionado && payload.imagen_url) {
+        const pathAnterior = extraerPathStorage(imagenUrlOriginal);
+        if (pathAnterior) {
+          fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${pathAnterior}`, {
+            method: 'DELETE',
+            headers: supaHeadersAuth(session.access_token),
+          }).catch(() => {});
+        }
+      }
       await actualizarProducto(editandoId, payload);
       showToast('Producto actualizado');
     } else {
@@ -359,8 +395,12 @@ $('producto-form').addEventListener('submit', async e => {
     }
 
     cerrarForm();
-    await cargarProductos();
-    renderGrid();
+    try {
+      await cargarProductos();
+      renderGrid();
+    } catch (err) {
+      showToast('Producto guardado, pero no se pudo recargar la lista: ' + err.message);
+    }
   } catch (err) {
     errorEl.textContent = err.message;
     errorEl.hidden = false;
@@ -402,6 +442,7 @@ $('btn-logout').addEventListener('click', () => {
 const mostrarPanel = async () => {
   $('login-screen').hidden = true;
   $('panel-screen').hidden = false;
+  $('form-overlay').hidden = true;
   $('admin-status').hidden = false;
   $('admin-status').textContent = 'Cargando tus productos…';
 
@@ -415,7 +456,14 @@ const mostrarPanel = async () => {
   }
 };
 
+const resetPantallas = () => {
+  $('login-screen').hidden = false;
+  $('panel-screen').hidden = true;
+  $('form-overlay').hidden = true;
+};
+
 const init = () => {
+  resetPantallas();
   const guardada = leerSesionGuardada();
   if (guardada) {
     session = guardada;

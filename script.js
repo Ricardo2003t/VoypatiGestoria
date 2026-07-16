@@ -1,15 +1,15 @@
 /* ════════════════════════════════════════════════════════════════
-   VOYPATIGESTORIA — script.js
-   Vanilla ES6+ · Mobile-First · PWA
+    VOYPATIGESTORIA — script.js
+    Vanilla ES6+ · Mobile-First · PWA
 ════════════════════════════════════════════════════════════════ */
 
 'use strict';
 
 /* ── CONFIGURACIÓN ──────────────────────────────────────────── */
 const CONFIG = {
-  WA_NUMBER:    '5358474565',  // ← número de contacto
-  PAGE_SIZE:    8,             // tarjetas por lote
-  SEARCH_DELAY: 400,           // ms debounce búsqueda
+  WA_NUMBER:    '5358474565',
+  PAGE_SIZE:    8,
+  SEARCH_DELAY: 400,
   CAROUSEL_MAX: 10,
 };
 
@@ -33,7 +33,7 @@ const CATEGORIAS = {
   deportivos:         { label: 'Deportivos',             color: '#dc2626' },
 };
 
-/* ── PLACEHOLDER DE IMAGEN (SVG inline, sin depender de fotos reales) ── */
+/* ── PLACEHOLDER DE IMAGEN ──────────────────────────────────── */
 const svgPlaceholder = (bg, emoji) => {
   const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'>
     <rect width='400' height='400' fill='${bg}'/>
@@ -44,15 +44,11 @@ const svgPlaceholder = (bg, emoji) => {
 
 const PLACEHOLDER = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Crect fill='%23fff1e3' width='400' height='400'/%3E%3C/svg%3E`;
 
-/* ── ESTADO DEL CATÁLOGO (se llena desde Supabase, ver cargarProductos) ── */
+/* ── ESTADO DEL CATÁLOGO ───────────────────────────────────── */
 let productos = [];
 
-/* Clave de caché local — permite mostrar el último catálogo conocido
-   aunque el cliente entre sin señal o con conexión muy inestable. */
 const CACHE_KEY = `vp-catalogo-${CLIENTE_ID}`;
 
-/* Convierte una fila de la tabla `productos` (snake_case, Postgres)
-   al formato que usa el resto del script (camelCase, con array de imágenes) */
 const mapProducto = row => ({
   id:             row.id,
   categoria:      row.categoria,
@@ -75,27 +71,33 @@ const cargarProductos = async () => {
 
   try {
     const res = await fetch(url, { headers: supaHeadersPublic() });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    console.log('[index] cargarProductos status:', res.status);
+    if (!res.ok) {
+      const txt = await res.text();
+      console.error('[index] cargarProductos error:', res.status, txt);
+      throw new Error(`HTTP ${res.status}`);
+    }
     const data = await res.json();
+    console.log('[index] cargarProductos count:', data.length);
     productos = data.map(mapProducto);
     localStorage.setItem(CACHE_KEY, JSON.stringify(productos));
   } catch (err) {
+    console.error('[index] cargarProductos fallback:', err.message);
     const cached = localStorage.getItem(CACHE_KEY);
     productos = cached ? JSON.parse(cached) : [];
   }
 };
 
-
-/* ── ESTADO GLOBAL ──────────────────────────────────────────── */
+/* ── ESTADO GLOBAL ─────────────────────────────────────────── */
 const state = {
-  filteredProducts: [],   // se llena en init(), después de cargarProductos()
+  filteredProducts: [],
   currentPage:      0,
   isLoading:        false,
   modalProduct:     null,
   modalImgIdx:      0,
 };
 
-/* ── REFS DOM ───────────────────────────────────────────────── */
+/* ── REFS DOM ──────────────────────────────────────────────── */
 const $  = id  => document.getElementById(id);
 const $$ = sel => document.querySelectorAll(sel);
 
@@ -163,7 +165,7 @@ const preloadSearchImages = query => {
   });
 };
 
-/* ── HISTORIAL URL ──────────────────────────────────────────── */
+/* ── HISTORIAL URL ─────────────────────────────────────────── */
 const pushState = (params = {}) => {
   const url = new URL(window.location);
   ['categoria', 'q'].forEach(k => url.searchParams.delete(k));
@@ -191,7 +193,7 @@ const applyStateFromURL = () => {
   renderCatalogo();
 };
 
-/* ── FILTROS UI ─────────────────────────────────────────────── */
+/* ── FILTROS UI ────────────────────────────────────────────── */
 const activateChip = chip => {
   $$('.chip').forEach(c => {
     c.classList.remove('active');
@@ -210,7 +212,7 @@ const resetFiltersUI = () => {
   if (todos) { todos.classList.add('active'); todos.setAttribute('aria-pressed', 'true'); }
 };
 
-/* ── FILTRAR PRODUCTOS ──────────────────────────────────────── */
+/* ── FILTRAR PRODUCTOS ─────────────────────────────────────── */
 const filterByCategoria = categoria => {
   state.filteredProducts = categoria === 'todos'
     ? [...productos]
@@ -218,7 +220,7 @@ const filterByCategoria = categoria => {
   renderCatalogo();
 };
 
-/* ── BÚSQUEDA FUZZY ─────────────────────────────────────────── */
+/* ── BÚSQUEDA FUZZY ────────────────────────────────────────── */
 const fuzzyScore = (p, query) => {
   const words    = normalize(query).split(/\s+/).filter(Boolean);
   const haystack = normalize(`${p.nombre} ${categoriaLabel(p.categoria)} ${p.descripcion}`);
@@ -329,7 +331,7 @@ const createCard = p => {
   return article;
 };
 
-/* ── LAZY LOAD / INFINITE SCROLL ────────────────────────────── */
+/* ── LAZY LOAD / INFINITE SCROLL ───────────────────────────── */
 const loadNextPage = () => {
   if (state.isLoading) return;
   const start = state.currentPage * CONFIG.PAGE_SIZE;
@@ -357,7 +359,7 @@ const sentinelObserver = new IntersectionObserver(
 );
 sentinelObserver.observe($('sentinel'));
 
-/* ── RENDER CATÁLOGO ────────────────────────────────────────── */
+/* ── RENDER CATÁLOGO ───────────────────────────────────────── */
 let lastSearchQuery = '';
 
 const renderCatalogo = () => {
@@ -375,7 +377,7 @@ const renderCatalogo = () => {
   loadNextPage();
 };
 
-/* ── CARRUSEL DE OFERTAS ────────────────────────────────────── */
+/* ── CARRUSEL DE OFERTAS ───────────────────────────────────── */
 const buildCarousel = () => {
   const ofertas = productos
     .filter(p => p.oferta)
@@ -604,7 +606,7 @@ $('filters-scroll').addEventListener('click', e => {
   }
 });
 
-/* ── BUSCADOR MÓVIL TOGGLE ──────────────────────────────────── */
+/* ── BUSCADOR MÓVIL TOGGLE ─────────────────────────────────── */
 $('btn-search-mobile').addEventListener('click', function () {
   const bar    = $('mobile-search-bar');
   const isOpen = bar.classList.toggle('open');
@@ -642,7 +644,7 @@ $('mobile-menu').querySelectorAll('.menu-link').forEach(l =>
   l.addEventListener('click', closeMenu)
 );
 
-/* ── BACK BUTTON / POPSTATE ─────────────────────────────────── */
+/* ── BACK BUTTON / POPSTATE ────────────────────────────────── */
 window.addEventListener('popstate', () => {
   if ($('modal-overlay').classList.contains('open')) {
     closeModal();
@@ -651,7 +653,7 @@ window.addEventListener('popstate', () => {
   applyStateFromURL();
 });
 
-/* ── SCROLL TO TOP ──────────────────────────────────────────── */
+/* ── SCROLL TO TOP ─────────────────────────────────────────── */
 window.addEventListener('scroll', () => {
   const btn = $('scroll-top');
   if (window.scrollY > 450) btn.removeAttribute('hidden');
@@ -662,7 +664,7 @@ $('scroll-top').addEventListener('click', () =>
   window.scrollTo({ top: 0, behavior: 'smooth' })
 );
 
-/* ── DARK MODE ───────────────────────────────────────────────── */
+/* ── DARK MODE ──────────────────────────────────────────────── */
 const applyTheme = theme => {
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('vp-theme', theme);
@@ -692,7 +694,7 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e =
   }
 });
 
-/* ── APPLE MAPS — solo visible en iOS ───────────────────────── */
+/* ── APPLE MAPS — solo visible en iOS ──────────────────────── */
 const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
               (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
@@ -702,7 +704,7 @@ if (btnApple && isIOS) {
   btnApple.href = 'maps://?q=VoypatiGestoria&ll=23.076917,-82.429631&z=16';
 }
 
-/* ── INIT ───────────────────────────────────────────────────── */
+/* ── INIT ──────────────────────────────────────────────────── */
 const init = async () => {
   await cargarProductos();
   state.filteredProducts = [...productos];

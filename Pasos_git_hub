@@ -1,0 +1,11 @@
+git status                                                     / Ver estado de Git Hub 
+git add (nombre archivo a modificar)                           /modificar archivo 
+git commit -m "Texto Describe Cambio"
+git push origin main                                           / Guardar Cambio 
+
+
+git add "Piezas\Peugeot\Radiador 106 .webp"             / ejemplo de agregar foto 
+
+git rm "Piezas\Peugeot\Vieleta Suspension 406.webp"     / Eliminar foto 
+git commit -m "Eliminar foto del repositorio"
+git push origin main
