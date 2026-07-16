@@ -59,27 +59,51 @@
   /* Transiciones */
   --ease:     cubic-bezier(.32,.72,0,1);
   --ease-out: cubic-bezier(0,.55,.45,1);
+
+  /* Safe-area por defecto (evita áreas en blanco en navegadores sin soporte) */
+  --sat: env(safe-area-inset-top, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
 }
 
 /* ── RESET ──────────────────────────────────────────────────── */
 *, *::before, *::after {
   margin: 0; padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
 
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
+
+/* Normaliza inputs/buttons en iOS Safari (evita estilos nativos y zoom al enfocar) */
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  appearance: none;
+  background: none;
+  border-radius: 0;
+}
+input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
 
 body {
   background: var(--bg);
   color: var(--text);
+  min-height: 100vh;        /* fallback navegadores sin dvh */
   min-height: 100dvh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Evita el "rubber-band" horizontal en iOS al hacer swipe */
+  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 img { display: block; max-width: 100%; }
@@ -135,6 +159,9 @@ button, a, [role="button"] {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
+  padding-top: var(--sat);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
 }
 
 .header-inner {
@@ -287,14 +314,17 @@ button, a, [role="button"] {
 .mobile-menu {
   position: fixed; top: 0; right: 0;
   width: min(320px, 85vw);
+  height: 100vh;
   height: 100dvh;
   background: var(--bg-card);
   z-index: 160;
   transform: translateX(100%);
   transition: transform .35s var(--ease);
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
   box-shadow: var(--shadow-xl);
 }
 .mobile-menu.open { transform: translateX(0); }
@@ -415,7 +445,7 @@ button, a, [role="button"] {
 /* ── LAYOUT PRINCIPAL ───────────────────────────────────────── */
 /* FIX: solo header fijo (62px). filters-bar ya ocupa su espacio en el flujo. */
 #main-content {
-  padding-top: var(--header-h);
+  padding-top: calc(var(--header-h) + var(--sat));
 }
 
 /* ── SECTION HEADERS ────────────────────────────────────────── */
