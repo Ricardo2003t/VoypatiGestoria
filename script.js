@@ -438,7 +438,26 @@ const buildCarousel = () => {
   );
 };
 
-/* ── MODAL ──────────────────────────────────────────────────── */
+/* ── SCROLL LOCK iOS/Android ──────────────────────────────── */
+let scrollY = 0;
+const lockScroll = () => {
+  scrollY = window.scrollY;
+  document.body.style.position = 'fixed';
+  document.body.style.top = `-${scrollY}px`;
+  document.body.style.left = '0';
+  document.body.style.right = '0';
+  document.body.style.overflow = 'hidden';
+  document.body.classList.add('modal-open');
+};
+const unlockScroll = () => {
+  document.body.style.position = '';
+  document.body.style.top = '';
+  document.body.style.left = '';
+  document.body.style.right = '';
+  document.body.style.overflow = '';
+  document.body.classList.remove('modal-open');
+  window.scrollTo(0, scrollY);
+};
 let modalTouchStartX = 0;
 
 const openModal = p => {
@@ -498,7 +517,7 @@ const openModal = p => {
   const overlay = $('modal-overlay');
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
 
   setTimeout(() => $('modal').focus(), 50);
 };
@@ -507,7 +526,7 @@ const closeModal = () => {
   const overlay = $('modal-overlay');
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = '';
+  unlockScroll();
   state.modalProduct = null;
 };
 
@@ -623,7 +642,8 @@ const openMenu = () => {
   $('menu-overlay').setAttribute('aria-hidden', 'false');
   $('btn-menu').classList.add('open');
   $('btn-menu').setAttribute('aria-expanded', 'true');
-  document.body.style.overflow = 'hidden';
+  lockScroll();
+  document.body.classList.add('menu-open');
 };
 const closeMenu = () => {
   $('mobile-menu').classList.remove('open');
@@ -632,7 +652,8 @@ const closeMenu = () => {
   $('menu-overlay').setAttribute('aria-hidden', 'true');
   $('btn-menu').classList.remove('open');
   $('btn-menu').setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
+  unlockScroll();
+  document.body.classList.remove('menu-open');
 };
 
 $('btn-menu').addEventListener('click', () =>
