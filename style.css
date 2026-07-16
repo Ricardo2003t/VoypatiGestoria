@@ -408,6 +408,31 @@ button, a, [role="button"] {
   border-bottom: 1px solid var(--border);
 }
 
+#filters-bar.hidden-by-search {
+  display: none;
+}
+
+/* ── BUSCADOR STICKY (reemplaza filtros al hacer scroll) ──────── */
+.sticky-search-bar {
+  position: sticky;
+  top: calc(var(--header-h) + var(--sat));
+  z-index: 89;
+  background: rgba(255,250,245,.98);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 14px;
+  display: none;
+}
+.sticky-search-bar.visible {
+  display: block;
+}
+.sticky-search-bar .search-wrap {
+  display: flex;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .filters-scroll {
   display: flex;
   align-items: center;
@@ -485,6 +510,11 @@ button, a, [role="button"] {
 /* FIX: solo header fijo (62px). filters-bar ya ocupa su espacio en el flujo. */
 #main-content {
   padding-top: calc(var(--header-h) + var(--sat));
+}
+
+/* Ajuste cuando el sticky search reemplaza a los filtros */
+body.sticky-search-active #main-content {
+  padding-top: calc(var(--header-h) + var(--sat) + 52px);
 }
 
 /* ── SECTION HEADERS ────────────────────────────────────────── */

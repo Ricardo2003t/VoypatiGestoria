@@ -744,6 +744,62 @@ if (btnApple && isIOS) {
   btnApple.href = 'maps://?q=VoypatiGestoria&ll=23.076917,-82.429631&z=16';
 }
 
+/* ── SCROLL: ocultar filtros y mostrar buscador sticky ───────── */
+const filtersBar = $('filters-bar');
+const stickySearchBar = $('sticky-search-bar');
+const catalogoSection = $('catalogo-section');
+const stickyInput = $('buscador-sticky');
+const stickyClear = $('clear-sticky');
+
+const syncStickySearch = valor => {
+  if (stickyInput) stickyInput.value = valor;
+  if (stickyClear) stickyClear.hidden = !valor;
+};
+
+const updateSearchVisibility = () => {
+  if (!filtersBar || !stickySearchBar || !catalogoSection) return;
+
+  const rect = catalogoSection.getBoundingClientRect();
+  const filtersHeight = filtersBar.offsetHeight;
+  const shouldShowSticky = rect.top <= filtersHeight + 10 && rect.bottom > filtersHeight + 50;
+
+  if (shouldShowSticky) {
+    filtersBar.classList.add('hidden-by-search');
+    stickySearchBar.classList.add('visible');
+    document.body.classList.add('sticky-search-active');
+  } else {
+    filtersBar.classList.remove('hidden-by-search');
+    stickySearchBar.classList.remove('visible');
+    document.body.classList.remove('sticky-search-active');
+  }
+};
+
+if (stickyInput) {
+  stickyInput.addEventListener('input', e => {
+    const valor = e.target.value;
+    syncBuscadores(valor, stickyInput.id);
+  });
+}
+if (stickyClear) {
+  stickyClear.addEventListener('click', () => {
+    stickyInput.value = '';
+    stickyClear.hidden = true;
+    syncBuscadores('', stickyInput.id);
+    stickyInput.focus();
+  });
+}
+
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+  if (!scrollTicking) {
+    requestAnimationFrame(() => {
+      updateSearchVisibility();
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }
+}, { passive: true });
+
 /* ── INIT ──────────────────────────────────────────────────── */
 const init = async () => {
   await cargarProductos();
