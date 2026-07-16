@@ -427,12 +427,15 @@ button, a, [role="button"] {
 }
 
 /* ── FILTROS STICKY ─────────────────────────────────────────── */
+/* Debe quedar fijo justo debajo del header para que este no lo tape.
+   El espacio superior equivale a la altura del header + safe-area. */
 #filters-bar {
-  position: relative;
-  z-index: 1;
+  position: sticky;
+  top: calc(var(--header-h) + var(--sat));
+  z-index: 90;
   background: rgba(255,250,245,.96);
   border-bottom: 1px solid var(--border);
-  margin-top: 6px;
+  margin-top: calc(var(--header-h) + var(--sat) + 12px);
 }
 
 /* ── BUSCADOR STICKY (aparece al bajar del filtro estático) ──────── */
@@ -534,14 +537,15 @@ button, a, [role="button"] {
 }
 
 /* ── LAYOUT PRINCIPAL ───────────────────────────────────────── */
-/* FIX: solo header fijo (62px). filters-bar ya ocupa su espacio en el flujo. */
+/* El filtro es sticky y ya aporta su propio espacio (margin-top) bajo el
+   header, por lo que el main solo necesita un pequeño respiro. */
 #main-content {
-  padding-top: calc(var(--header-h) + var(--sat));
+  padding-top: 0;
 }
 
 /* Ajuste cuando el sticky search reemplaza a los filtros */
 body.sticky-search-active #main-content {
-  padding-top: calc(var(--header-h) + var(--sat) + 52px);
+  padding-top: 52px;
 }
 
 /* ── SECTION HEADERS ────────────────────────────────────────── */

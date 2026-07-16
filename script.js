@@ -741,7 +741,7 @@ const updateSearchVisibility = () => {
 
   const rect = filtersBar.getBoundingClientRect();
   const filtersBottom = rect.bottom;
-  const shouldShow = window.scrollY + rect.height > filtersBottom - 10;
+  const shouldShow = window.scrollY > filtersBottom + 40;
 
   if (shouldShow) {
     stickySearchBar.classList.add('visible');
