@@ -440,6 +440,7 @@ const renderCatalogo = () => {
     return;
   }
 
+  setupSeccionObserver.clear();
   loadNextPage();
 };
 
@@ -450,9 +451,6 @@ const setupSeccionObserver = () => {
   const barra = $('seccion-actual');
   const texto = barra.querySelector('.seccion-actual-texto');
   const dot   = barra.querySelector('.seccion-actual-dot');
-  const headers = $$('.catalogo-seccion');
-
-  if (!headers.length) { barra.hidden = true; return; }
 
   const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--header-h')) || 62;
   const sat = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
@@ -461,6 +459,12 @@ const setupSeccionObserver = () => {
   let ticking = false;
   const update = () => {
     ticking = false;
+    const headers = $$('.catalogo-seccion');
+    if (!headers.length) {
+      barra.hidden = true;
+      barra.classList.remove('visible');
+      return;
+    }
     const y = window.scrollY + top;
     let activa = headers[0];
     for (const h of headers) {
@@ -487,6 +491,13 @@ const setupSeccionObserver = () => {
     window.addEventListener('resize', update, { passive: true });
   }
   update();
+};
+
+/* Oculta la barra de sección activa (cuando no hay separadores por
+   categoría, p. ej. al filtrar por una sola categoría o al buscar). */
+setupSeccionObserver.clear = () => {
+  const barra = $('seccion-actual');
+  if (barra) { barra.hidden = true; barra.classList.remove('visible'); }
 };
 
 /* ── SECCIÓN "NUEVOS" (productos de la última semana) ─────────── */
