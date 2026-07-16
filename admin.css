@@ -209,9 +209,56 @@ textarea.admin-input { resize: vertical; }
   gap: 10px;
   font-weight: 800;
   font-size: 16px;
+  min-width: 0;
+  flex-shrink: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.admin-header-logo { border-radius: 50%; object-fit: cover; }
-.admin-header-actions { display: flex; gap: 10px; }
+.admin-header-logo { border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.admin-header-actions { display: flex; gap: 10px; flex-shrink: 0; }
+
+@media (max-width: 399px) {
+  .admin-header-inner {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .admin-header-brand {
+    font-size: 14px;
+    gap: 6px;
+  }
+  .admin-header-logo {
+    width: 28px; height: 28px;
+  }
+  .admin-header-actions {
+    gap: 6px;
+  }
+  .admin-header-actions .admin-btn-ghost {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 359px) {
+  .admin-header-inner {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .admin-header-brand {
+    font-size: 13px;
+    gap: 4px;
+  }
+  .admin-header-logo {
+    width: 24px; height: 24px;
+  }
+  .admin-header-actions {
+    gap: 4px;
+  }
+  .admin-header-actions .admin-btn-ghost {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+}
 
 /* ── CONTENIDO ──────────────────────────────────────────────── */
 .admin-main {
@@ -467,30 +514,6 @@ textarea.admin-input { resize: vertical; }
 
   .admin-btn-primary {
     margin-top: 16px;
-  }
-
-  .admin-header-inner {
-    padding: 10px 12px;
-    gap: 8px;
-  }
-
-  .admin-header-brand {
-    font-size: 14px;
-    gap: 6px;
-  }
-
-  .admin-header-logo {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-  }
-
-  .admin-header-actions {
-    gap: 6px;
-  }
-
-  .admin-header-actions .admin-btn-ghost {
-    padding: 6px 10px;
-    font-size: 12px;
   }
 
   .admin-main {

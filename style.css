@@ -956,8 +956,9 @@ button, a, [role="button"] {
     max-height: 95dvh;
     border-radius: var(--r-xl) var(--r-xl) 0 0;
   }
-  .modal-gallery { aspect-ratio: 4 / 3; }
+  .modal-gallery { aspect-ratio: 1 / 1; background: #fff; }
   .modal-body { padding: 12px 14px 18px; }
+  #modal-img { background: #fff; }
     .modal-nombre { font-size: clamp(16px, 5vw, 22px); }
     .modal-precio-actual { font-size: clamp(20px, 6.5vw, 28px); }
     .btn-wa, .btn-call { font-size: 14px; padding: 14px 16px; }
@@ -1412,10 +1413,18 @@ body.modal-open {
   .search-wrap { display: none; }
   #btn-search-mobile { display: inline-flex; }
   
-  .chip { width: 58px; height: 58px; }
-  .chip-label { font-size: 9px; letter-spacing: .1px; }
-  .filters-scroll { padding: 6px 8px; gap: 4px; }
-  .filter-sep { height: 12px; }
+  .chip { width: 138px; height: 138px; border-radius: 18px; }
+  .chip-label { font-size: 12px; letter-spacing: .3px; }
+  .filters-scroll { padding: 10px 12px; gap: 10px; }
+  .filter-sep { height: 20px; }
+  
+  .chip-img { object-fit: contain; background: var(--bg-elevated); }
+  
+  .chip-todos {
+    padding: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
   
   .presentacion-section { padding: 12px 8px 2px; }
   .presentacion-inner { padding: 14px 12px; gap: 12px; border-radius: var(--r-md, 12px); }
@@ -1493,10 +1502,18 @@ body.modal-open {
   .search-wrap { display: none; }
   #btn-search-mobile { display: inline-flex; }
   
-  .chip { width: 62px; height: 62px; }
-  .chip-label { font-size: 9px; letter-spacing: .1px; }
-  .filters-scroll { padding: 7px 8px; gap: 4px; }
-  .filter-sep { height: 12px; }
+  .chip { width: 138px; height: 138px; border-radius: 18px; }
+  .chip-label { font-size: 12px; letter-spacing: .3px; }
+  .filters-scroll { padding: 10px 12px; gap: 10px; }
+  .filter-sep { height: 20px; }
+  
+  .chip-img { object-fit: contain; }
+  
+  .chip-todos {
+    padding: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
   
   .presentacion-inner { padding: 16px 14px; gap: 14px; }
   .presentacion-title { font-size: 20px; }
@@ -1524,7 +1541,8 @@ body.modal-open {
   .carousel-btn { width: 30px; height: 30px; min-width: 30px; min-height: 30px; }
   .carousel-btn svg { width: 14px; height: 14px; }
   
-  .modal-gallery { aspect-ratio: 4 / 3; }
+  .modal-gallery { aspect-ratio: 1 / 1; background: #fff; }
+  #modal-img { background: #fff; }
   
   .modal-body { padding: 14px 16px 20px; }
 }
