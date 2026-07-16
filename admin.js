@@ -225,13 +225,13 @@ const borrarProducto = async producto => {
   });
   if (!res.ok) throw new Error('No se pudo eliminar el producto');
 
+  /* Borra la foto del Storage (si la tiene). Si falla, el producto ya
+     se eliminó, pero avisamos para no dejar el archivo huérfano. */
   if (producto.imagen_url) {
-    const path = extraerPathStorage(producto.imagen_url);
-    if (path) {
-      fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`, {
-        method: 'DELETE',
-        headers: supaHeadersAuth(session.access_token),
-      }).catch(() => {});
+    try {
+      await borrarFotoDeUrl(producto.imagen_url);
+    } catch (err) {
+      throw new Error('Producto eliminado, pero la foto no se pudo borrar del servidor: ' + err.message);
     }
   }
 };
@@ -240,6 +240,31 @@ const extraerPathStorage = url => {
   const marker = `/object/public/${STORAGE_BUCKET}/`;
   const i = url.indexOf(marker);
   return i === -1 ? null : url.slice(i + marker.length);
+};
+
+/* Borra un archivo del Storage de Supabase y verifica la respuesta.
+   Usa authFetch (refresca el token si expiró). Lanza si falla para que
+   el llamador pueda avisar al usuario. */
+const borrarFotoStorage = async path => {
+  if (!path) return;
+  const res = await authFetch(
+    `${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`,
+    { method: 'DELETE' }
+  );
+  if (!res.ok) {
+    let msg = 'No se pudo borrar la foto del servidor';
+    try {
+      const err = await res.json();
+      msg = err.message || err.error || JSON.stringify(err) || msg;
+    } catch { /* respuesta sin cuerpo */ }
+    throw new Error(msg);
+  }
+};
+
+/* Extrae el path y borra la foto asociada a una url, si existe. */
+const borrarFotoDeUrl = async url => {
+  const path = extraerPathStorage(url);
+  if (path) await borrarFotoStorage(path);
 };
 
 /* ── COMPRESIÓN DE FOTO A WEBP ──────────────────────────────── */
@@ -446,12 +471,10 @@ $('producto-form').addEventListener('submit', async e => {
 
     if (editandoId) {
       if (imagenUrlOriginal && archivoSeleccionado && payload.imagen_url) {
-        const pathAnterior = extraerPathStorage(imagenUrlOriginal);
-        if (pathAnterior) {
-          fetch(`${SUPABASE_URL}/storage/v1/object/${STORAGE_BUCKET}/${pathAnterior}`, {
-            method: 'DELETE',
-            headers: supaHeadersAuth(session.access_token),
-          }).catch(() => {});
+        try {
+          await borrarFotoDeUrl(imagenUrlOriginal);
+        } catch (err) {
+          showToast('Producto actualizado, pero la foto anterior no se pudo borrar: ' + err.message);
         }
       }
       await actualizarProducto(editandoId, payload);
