@@ -745,9 +745,11 @@ const updateSearchVisibility = () => {
 
   if (shouldShow) {
     stickySearchBar.classList.add('visible');
+    filtersBar.classList.add('filters-hidden');
     document.body.classList.add('sticky-search-active');
   } else {
     stickySearchBar.classList.remove('visible');
+    filtersBar.classList.remove('filters-hidden');
     document.body.classList.remove('sticky-search-active');
   }
 };

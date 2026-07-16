@@ -427,15 +427,26 @@ button, a, [role="button"] {
 }
 
 /* ── FILTROS STICKY ─────────────────────────────────────────── */
-/* Debe quedar fijo justo debajo del header para que este no lo tape.
-   El espacio superior equivale a la altura del header + safe-area. */
+/* Estático al inicio (debajo del header). Al bajar se oculta y aparece
+   el buscador sticky en su lugar, evitando que el menú lo tape. */
 #filters-bar {
-  position: sticky;
-  top: calc(var(--header-h) + var(--sat));
+  position: relative;
   z-index: 90;
   background: rgba(255,250,245,.96);
   border-bottom: 1px solid var(--border);
   margin-top: calc(var(--header-h) + var(--sat) + 12px);
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+/* Al bajar, el filtro desaparece y lo reemplaza el buscador sticky */
+#filters-bar.filters-hidden {
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+  margin-top: 0;
+  height: 0;
+  overflow: hidden;
+  border-bottom: none;
 }
 
 /* ── BUSCADOR STICKY (aparece al bajar del filtro estático) ──────── */
