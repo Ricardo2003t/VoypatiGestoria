@@ -150,6 +150,14 @@ const cargarNombreNegocio = async () => {
 };
 
 /* ── PRODUCTOS: leer / crear / editar / borrar ─────────────────── */
+const NUEVOS_DIAS = 7;
+
+const esNuevo = p => {
+  if (!p.created_at) return false;
+  const diffMs = Date.now() - new Date(p.created_at).getTime();
+  return diffMs >= 0 && diffMs < NUEVOS_DIAS * 24 * 60 * 60 * 1000;
+};
+
 const CATEGORIA_ORDER = ['ferreteria','celulares','transporte','hogar','tecnologia','electrodomesticos','deportivos'];
 
 const cargarProductos = async () => {
@@ -170,6 +178,7 @@ const cargarProductos = async () => {
     descripcion: row.descripcion || '',
     oferta: !!row.oferta,
     disponible: row.disponible !== false,
+    created_at: row.created_at || null,
   }));
   productos.sort((a, b) => {
     const ca = CATEGORIA_ORDER.indexOf(a.categoria);
@@ -313,8 +322,9 @@ const renderGrid = () => {
           ${formatPrice(p.precio)}
           ${p.precio_original ? `<span style="text-decoration:line-through;color:var(--text-muted);font-weight:500;font-size:12px;margin-left:6px;">${formatPrice(p.precio_original)}</span>` : ''}
         </span>
-        <div class="admin-card-badges">
+         <div class="admin-card-badges">
           ${p.oferta ? '<span class="admin-badge admin-badge-oferta">Oferta</span>' : ''}
+          ${esNuevo(p) ? '<span class="admin-badge admin-badge-nuevo">Nuevo</span>' : ''}
           ${!p.disponible ? '<span class="admin-badge admin-badge-no-disp">No disponible</span>' : ''}
         </div>
         <div class="admin-card-actions">

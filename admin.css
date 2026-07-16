@@ -426,6 +426,7 @@ textarea.admin-input { resize: vertical; }
   border-radius: 999px;
 }
 .admin-badge-oferta { background: var(--orange-light); color: var(--orange); }
+.admin-badge-nuevo  { background: var(--green-light);  color: var(--green); }
 .admin-badge-no-disp { background: var(--red-light); color: var(--red); }
 
 .admin-card-actions {
@@ -603,7 +604,7 @@ textarea.admin-input { resize: vertical; }
   }
 
   .admin-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
 
@@ -695,7 +696,7 @@ textarea.admin-input { resize: vertical; }
   }
 
   .admin-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
 

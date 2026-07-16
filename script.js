@@ -22,6 +22,7 @@ const CONFIG = {
   PAGE_SIZE:    8,
   SEARCH_DELAY: 400,
   CAROUSEL_MAX: 10,
+  NUEVOS_DIAS:  7,
 };
 
 /* ── DETECCIÓN DE CONEXIÓN LENTA ────────────────────────────── */
@@ -70,6 +71,7 @@ const mapProducto = row => ({
   descripcion:    row.descripcion || '',
   oferta:         !!row.oferta,
   disponible:     row.disponible !== false,
+  createdAt:      row.created_at || null,
 });
 
 /* Trae el catálogo del cliente de este deploy (CLIENTE_ID, ver supabase-config.js).
@@ -339,6 +341,7 @@ const createCard = p => {
         width="400" height="400"
         loading="lazy"
       />
+      ${esNuevo(p) ? '<span class="p-card-badge-nuevo" aria-label="Producto nuevo">Nuevo</span>' : ''}
       ${p.oferta ? '<span class="p-card-badge-oferta" aria-label="Producto en oferta">Oferta</span>' : ''}
       ${!p.disponible ? `<div class="p-card-no-disp-overlay" aria-hidden="true"><span>No Disponible</span></div>` : ''}
     </div>
@@ -484,6 +487,81 @@ const setupSeccionObserver = () => {
     window.addEventListener('resize', update, { passive: true });
   }
   update();
+};
+
+/* ── SECCIÓN "NUEVOS" (productos de la última semana) ─────────── */
+/* No se guarda ningún flag: un producto es "nuevo" si su created_at
+   tiene menos de NUEVOS_DIAS días. Pasado ese tiempo deja de aparecer
+   aquí automáticamente, pero sigue en el catálogo normal. */
+const esNuevo = p => {
+  if (!p.createdAt) return false;
+  const diffMs = Date.now() - new Date(p.createdAt).getTime();
+  return diffMs >= 0 && diffMs < CONFIG.NUEVOS_DIAS * 24 * 60 * 60 * 1000;
+};
+
+const buildNuevos = () => {
+  const section = $('nuevos-section');
+  const track   = $('nuevos-track');
+
+  const nuevos = productos
+    .filter(esNuevo)
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, CONFIG.CAROUSEL_MAX);
+
+  if (!nuevos.length) {
+    section.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+
+  track.innerHTML = nuevos.map((p, i) => {
+    const precioOgHTML = p.precioOriginal
+      ? `<span class="c-card-price-original">${formatPrice(p.precioOriginal)}</span>`
+      : '';
+    return `
+      <article class="c-card" role="listitem" tabindex="0"
+               aria-label="${p.nombre}, ${formatPrice(p.precio)}${p.precioOriginal ? ', antes ' + formatPrice(p.precioOriginal) : ''}"
+               data-idx="${i}">
+        <div class="c-card-img-wrap">
+          <img class="c-card-img"
+               data-src="${p.imagenes[0]}"
+               src="${PLACEHOLDER}"
+               alt="${p.nombre}"
+               width="400" height="400" loading="lazy" />
+          ${esNuevo(p) ? '<span class="c-card-badge c-card-badge-nuevo">Nuevo</span>' : ''}
+        </div>
+        <div class="c-card-body">
+          <div class="c-card-name">${p.nombre}</div>
+          <div>
+            <span class="c-card-price">${formatPrice(p.precio)}</span>${precioOgHTML}
+          </div>
+          <span class="c-card-badge">Ver</span>
+        </div>
+      </article>
+    `;
+  }).join('');
+
+  track.querySelectorAll('.c-card').forEach((card, i) => {
+    const open = () => openModal(nuevos[i]);
+    card.addEventListener('click', open);
+    card.addEventListener('keydown', e => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), open()));
+  });
+
+  observeLazyImages();
+
+  const getScrollAmount = () => {
+    const firstCard = track.querySelector('.c-card');
+    if (!firstCard) return 200;
+    return (firstCard.offsetWidth + 8) * 2;
+  };
+
+  $('nuevos-prev').addEventListener('click', () =>
+    track.scrollBy({ left: -getScrollAmount(), behavior: 'smooth' })
+  );
+  $('nuevos-next').addEventListener('click', () =>
+    track.scrollBy({ left:  getScrollAmount(), behavior: 'smooth' })
+  );
 };
 
 /* ── CARRUSEL DE OFERTAS ───────────────────────────────────── */
@@ -840,6 +918,7 @@ if (stickyClear) {
 const init = async () => {
   await cargarProductos();
   state.filteredProducts = [...productos];
+  buildNuevos();
   buildCarousel();
   applyStateFromURL(); // leer URL al cargar (links compartidos)
 };

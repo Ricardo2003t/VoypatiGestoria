@@ -540,6 +540,7 @@ button, a, [role="button"] {
 }
 .badge-orange { background: var(--orange-light); color: var(--orange); }
 .badge-blue   { background: var(--accent-light);  color: var(--accent); }
+.badge-green  { background: var(--green-light);   color: var(--green); }
 
 /* ── PRESENTACIÓN ───────────────────────────────────────────── */
 .presentacion-section {
@@ -630,7 +631,8 @@ button, a, [role="button"] {
   position: relative;
 }
 
-#carousel-track {
+#carousel-track,
+#nuevos-track {
   display: flex;
   gap: 8px;
   padding: 0 10px 10px;
@@ -640,10 +642,11 @@ button, a, [role="button"] {
   scrollbar-width: none;
   scroll-behavior: smooth;
 }
-#carousel-track::-webkit-scrollbar { display: none; }
+#carousel-track::-webkit-scrollbar,
+#nuevos-track::-webkit-scrollbar { display: none; }
 
 .carousel-btn {
-  display: none;
+  display: inline-flex;
   position: absolute;
   top: 50%; transform: translateY(-60%);
   width: 36px; height: 36px; min-width: 36px; min-height: 36px;
@@ -664,10 +667,6 @@ button, a, [role="button"] {
 }
 .carousel-btn-prev { left: 4px; }
 .carousel-btn-next { right: 4px; }
-
-@media (min-width: 640px) {
-  .carousel-btn { display: inline-flex; }
-}
 
 /* Tarjeta carrusel */
 .c-card {
@@ -725,6 +724,11 @@ button, a, [role="button"] {
   padding: 2px 7px; border-radius: var(--r-full);
   background: var(--orange); color: #fff;
   text-transform: uppercase; letter-spacing: .4px;
+}
+.c-card-badge-nuevo {
+  position: absolute; top: 6px; right: 6px;
+  margin: 0; z-index: 2;
+  background: var(--green); color: #fff;
 }
 
 /* ── GRID CATÁLOGO ──────────────────────────────────────────── */
@@ -841,6 +845,13 @@ button, a, [role="button"] {
 .p-card-badge-oferta {
   position: absolute; top: 8px; left: 8px;
   background: var(--orange); color: #fff;
+  font-size: 9px; font-weight: 800;
+  padding: 3px 8px; border-radius: var(--r-full);
+  text-transform: uppercase; letter-spacing: .4px;
+}
+.p-card-badge-nuevo {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--green); color: #fff;
   font-size: 9px; font-weight: 800;
   padding: 3px 8px; border-radius: var(--r-full);
   text-transform: uppercase; letter-spacing: .4px;
@@ -1205,7 +1216,8 @@ button, a, [role="button"] {
 @media (min-width: 768px) {
   .section-header { padding: 24px 16px 14px; }
   .section-title { font-size: 20px; }
-  #carousel-track { padding: 0 16px 16px; gap: 12px; }
+  #carousel-track,
+  #nuevos-track { padding: 0 16px 16px; gap: 12px; }
 }
 /* ════════════════════════════════════════════════════════════════
    VOYPATIGESTORIA — style.css  ADICIONES
@@ -1543,6 +1555,7 @@ body.modal-open {
   .p-card-precio-og { font-size: 10px; }
   .p-card-disp { margin-top: 4px; font-size: 9px; padding: 2px 6px; }
   .p-card-badge-oferta { font-size: 8px; padding: 2px 6px; top: 6px; left: 6px; }
+  .p-card-badge-nuevo  { font-size: 8px; padding: 2px 6px; top: 6px; right: 6px; }
   
   .c-card { width: 120px; }
   .c-card-body { padding: 6px; }
@@ -1556,7 +1569,8 @@ body.modal-open {
   .carousel-btn-prev { left: 2px; }
   .carousel-btn-next { right: 2px; }
   
-  #carousel-track { padding: 0 8px 8px; gap: 6px; }
+  #carousel-track,
+  #nuevos-track { padding: 0 8px 8px; gap: 6px; }
   
   #filters-bar {
     background: rgba(255,250,245,.98);
