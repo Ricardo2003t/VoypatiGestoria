@@ -426,9 +426,9 @@ button, a, [role="button"] {
   .menu-link svg { width: 18px; height: 18px; }
 }
 
-/* ── FILTROS ─────────────────────────────────────────────────── */
-/* Estático al inicio (debajo del header). Al bajar se oculta de inmediato
-   (sin transición) y aparece el buscador sticky en su lugar. */
+/* ── FILTROS (estático, debajo del header) ──────────────────── */
+/* Estático: se queda en su lugar al hacer scroll y no desaparece,
+   evitando saltos de layout (tirón) en la página. */
 #filters-bar {
   position: relative;
   z-index: 90;
@@ -437,35 +437,9 @@ button, a, [role="button"] {
   margin-top: calc(var(--header-h) + var(--sat) + 12px);
 }
 
-/* Al bajar, el filtro desaparece y lo reemplaza el buscador sticky.
-   display:none evita cualquier lag de transición/reflow. */
-#filters-bar.filters-hidden {
-  display: none;
-}
-
-/* ── BUSCADOR STICKY (aparece al bajar del filtro estático) ──────── */
+/* ── BUSCADOR STICKY (desactivado: el filtro quedó estático) ───── */
 .sticky-search-bar {
-  position: fixed;
-  top: calc(var(--header-h) + var(--sat));
-  left: 0; right: 0;
-  z-index: 89;
-  background: rgba(255,250,245,.98);
-  border-bottom: 1px solid var(--border);
-  padding: 8px 14px;
-  transform: translateY(-100%);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform .2s ease, opacity .2s ease;
-}
-.sticky-search-bar.visible {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
-}
-.sticky-search-bar .search-wrap {
-  display: flex;
-  max-width: 600px;
-  margin: 0 auto;
+  display: none;
 }
 
 .filters-scroll {
@@ -545,12 +519,6 @@ button, a, [role="button"] {
 /* El filtro estático aporta su propio espacio (margin-top) bajo el header. */
 #main-content {
   padding-top: 0;
-}
-
-/* Cuando se baja, el filtro se oculta y el buscador sticky (fijo) lo
-   reemplaza; reservamos su altura para que no tape el catálogo. */
-body.sticky-search-active #main-content {
-  padding-top: 52px;
 }
 
 /* ── SECTION HEADERS ────────────────────────────────────────── */

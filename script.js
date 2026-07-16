@@ -730,30 +730,9 @@ if (btnApple && isIOS) {
   btnApple.href = 'maps://?q=VoypatiGestoria&ll=23.076917,-82.429631&z=16';
 }
 
-/* ── SCROLL: mostrar buscador sticky al bajar del filtro ─────── */
-const filtersBar = $('filters-bar');
-const stickySearchBar = $('sticky-search-bar');
+/* ── BUSCADOR STICKY (desactivado: el filtro quedó estático) ───── */
 const stickyInput = $('buscador-sticky');
 const stickyClear = $('clear-sticky');
-
-/* Umbral cacheado: el filtro es estático al inicio, así que su posición
-   inferior no cambia al hacer scroll. Se mide una vez para evitar reflow
-   en cada evento scroll (causa del lag). */
-let filterBottomThreshold = 0;
-const measureThreshold = () => {
-  if (!filtersBar) return;
-  filterBottomThreshold = filtersBar.offsetTop + filtersBar.offsetHeight + 40;
-};
-
-const updateSearchVisibility = () => {
-  if (!filtersBar || !stickySearchBar) return;
-
-  const shouldShow = window.scrollY > filterBottomThreshold;
-
-  stickySearchBar.classList.toggle('visible', shouldShow);
-  filtersBar.classList.toggle('filters-hidden', shouldShow);
-  document.body.classList.toggle('sticky-search-active', shouldShow);
-};
 
 if (stickyInput) {
   stickyInput.addEventListener('input', e => {
@@ -781,20 +760,12 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-/* Recalcula el umbral si cambia el tamaño de la ventana */
-window.addEventListener('resize', () => {
-  measureThreshold();
-  updateSearchVisibility();
-}, { passive: true });
-
 /* ── INIT ──────────────────────────────────────────────────── */
 const init = async () => {
   await cargarProductos();
   state.filteredProducts = [...productos];
   buildCarousel();
   applyStateFromURL(); // leer URL al cargar (links compartidos)
-  measureThreshold();   // calcular umbral del filtro una vez cargado el layout
-  updateSearchVisibility();
 };
 
 if (document.readyState === 'loading') {
