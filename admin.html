@@ -63,6 +63,23 @@
       <button id="btn-nuevo" class="admin-btn admin-btn-primary">+ Agregar producto</button>
     </div>
 
+    <div class="admin-filters">
+      <div class="admin-search-wrap">
+        <svg class="admin-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" id="admin-buscar" class="admin-input admin-search" placeholder="Buscar producto…" autocomplete="off" aria-label="Buscar productos" />
+      </div>
+      <select id="admin-filtro-cat" class="admin-input admin-filtro" aria-label="Filtrar por categoría">
+        <option value="todos">Todas las categorías</option>
+        <option value="ferreteria">Ferretería</option>
+        <option value="celulares">Celulares y accesorios</option>
+        <option value="transporte">Transporte</option>
+        <option value="hogar">Útiles del hogar</option>
+        <option value="tecnologia">Tecnología</option>
+        <option value="electrodomesticos">Electrodomésticos</option>
+        <option value="deportivos">Deportivos</option>
+      </select>
+    </div>
+
     <p id="admin-status" class="admin-status" hidden></p>
 
     <div id="admin-grid" class="admin-grid" aria-label="Lista de productos"></div>

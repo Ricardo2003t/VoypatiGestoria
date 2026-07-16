@@ -29,6 +29,8 @@ let editandoId = null;
 let archivoSeleccionado = null;
 let imagenUrlOriginal = null;
 let scrollY = 0;
+let filtroBusqueda = '';
+let filtroCategoria = 'todos';
 
 /* ── SCROLL LOCK iOS/Android ───────────────────────────────── */
 const lockScroll = () => {
@@ -326,22 +328,61 @@ const subirFoto = async blob => {
 /* ── RENDER: grid de productos del panel ───────────────────────── */
 const formatPrice = n => `$${Number(n).toFixed(2)}`;
 
-const renderGrid = () => {
+const CAT_LABELS = {
+  ferreteria:        'Ferretería',
+  celulares:         'Celulares y accesorios',
+  transporte:        'Transporte',
+  hogar:             'Útiles del hogar',
+  tecnologia:        'Tecnología',
+  electrodomesticos: 'Electrodomésticos',
+  deportivos:        'Deportivos',
+};
+const categoriaLabel = cat => CAT_LABELS[cat] || cat || '—';
+
+const normalize = str =>
+  String(str).toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+/* Aplica búsqueda (nombre/categoría/descripción) y filtro por
+   categoría sobre la lista completa y pinta el grid resultante. */
+const aplicarFiltrosAdmin = () => {
+  const q = normalize(filtroBusqueda.trim());
+  const cat = filtroCategoria;
+
+  const filtrados = productos.filter(p => {
+    if (cat !== 'todos' && p.categoria !== cat) return false;
+    if (!q) return true;
+    const haystack = normalize(`${p.nombre} ${categoriaLabel(p.categoria)} ${p.descripcion || ''}`);
+    return haystack.includes(q);
+  });
+
+  renderGrid(filtrados);
+};
+
+const renderGrid = (lista = productos) => {
   const grid = $('admin-grid');
   const empty = $('admin-empty');
 
   if (!productos.length) {
     grid.innerHTML = '';
     empty.hidden = false;
+    empty.textContent = 'Todavía no tienes productos. Agrega el primero.';
+    return;
+  }
+  if (!lista.length) {
+    grid.innerHTML = '';
+    empty.hidden = false;
+    empty.textContent = 'No hay productos que coincidan con la búsqueda o el filtro.';
     return;
   }
   empty.hidden = true;
 
-  grid.innerHTML = productos.map(p => `
+  grid.innerHTML = lista.map(p => `
     <article class="admin-card">
       <img class="admin-card-img" src="${p.imagen_url || ''}" alt="${p.nombre}" loading="lazy" />
       <div class="admin-card-body">
-        <span class="admin-card-cat">${p.categoria || '—'}</span>
+        <span class="admin-card-cat">${categoriaLabel(p.categoria)}</span>
         <span class="admin-card-name">${p.nombre}</span>
         <span class="admin-card-price">
           ${formatPrice(p.precio)}
@@ -379,7 +420,7 @@ const confirmarBorrado = async producto => {
   try {
     await borrarProducto(producto);
     productos = productos.filter(p => p.id !== producto.id);
-    renderGrid();
+    aplicarFiltrosAdmin();
     showToast('Producto eliminado');
   } catch (err) {
     showToast(err.message);
@@ -439,6 +480,18 @@ $('form-close').addEventListener('click', cerrarForm);
 $('form-cancel').addEventListener('click', cerrarForm);
 $('form-overlay').addEventListener('click', e => { if (e.target === $('form-overlay')) cerrarForm(); });
 
+/* ── BÚSQUEDA Y FILTRO DEL PANEL ───────────────────────────── */
+let adminSearchTimer;
+$('admin-buscar').addEventListener('input', e => {
+  filtroBusqueda = e.target.value;
+  clearTimeout(adminSearchTimer);
+  adminSearchTimer = setTimeout(aplicarFiltrosAdmin, 250);
+});
+$('admin-filtro-cat').addEventListener('change', e => {
+  filtroCategoria = e.target.value;
+  aplicarFiltrosAdmin();
+});
+
 $('producto-form').addEventListener('submit', async e => {
   e.preventDefault();
   if (!requireSession()) return;
@@ -487,7 +540,7 @@ $('producto-form').addEventListener('submit', async e => {
     cerrarForm();
     try {
       await cargarProductos();
-      renderGrid();
+      aplicarFiltrosAdmin();
     } catch (err) {
       showToast('Producto guardado, pero no se pudo recargar la lista: ' + err.message);
     }
@@ -540,7 +593,7 @@ const mostrarPanel = async () => {
   try {
     await cargarProductos();
     $('admin-status').hidden = true;
-    renderGrid();
+    aplicarFiltrosAdmin();
   } catch (err) {
     $('admin-status').textContent = err.message;
   }

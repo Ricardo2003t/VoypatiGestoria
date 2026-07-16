@@ -352,6 +352,43 @@ textarea.admin-input { resize: vertical; }
   margin: 0;
 }
 
+.admin-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.admin-search-wrap {
+  position: relative;
+  flex: 1 1 200px;
+  min-width: 0;
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 12px; top: 50%;
+  transform: translateY(-50%);
+  width: 16px; height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.admin-search {
+  width: 100%;
+  padding-left: 36px;
+}
+
+.admin-filtro {
+  flex: 0 0 auto;
+  min-width: 160px;
+}
+
+@media (max-width: 479px) {
+  .admin-filters { flex-direction: column; }
+  .admin-filtro { width: 100%; }
+}
+
 .admin-empty {
   text-align: center;
   color: var(--text-muted);
