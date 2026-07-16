@@ -426,27 +426,21 @@ button, a, [role="button"] {
   .menu-link svg { width: 18px; height: 18px; }
 }
 
-/* ── FILTROS STICKY ─────────────────────────────────────────── */
-/* Estático al inicio (debajo del header). Al bajar se oculta y aparece
-   el buscador sticky en su lugar, evitando que el menú lo tape. */
+/* ── FILTROS ─────────────────────────────────────────────────── */
+/* Estático al inicio (debajo del header). Al bajar se oculta de inmediato
+   (sin transición) y aparece el buscador sticky en su lugar. */
 #filters-bar {
   position: relative;
   z-index: 90;
   background: rgba(255,250,245,.96);
   border-bottom: 1px solid var(--border);
   margin-top: calc(var(--header-h) + var(--sat) + 12px);
-  transition: transform .2s ease, opacity .2s ease;
 }
 
-/* Al bajar, el filtro desaparece y lo reemplaza el buscador sticky */
+/* Al bajar, el filtro desaparece y lo reemplaza el buscador sticky.
+   display:none evita cualquier lag de transición/reflow. */
 #filters-bar.filters-hidden {
-  opacity: 0;
-  transform: translateY(-100%);
-  pointer-events: none;
-  margin-top: 0;
-  height: 0;
-  overflow: hidden;
-  border-bottom: none;
+  display: none;
 }
 
 /* ── BUSCADOR STICKY (aparece al bajar del filtro estático) ──────── */

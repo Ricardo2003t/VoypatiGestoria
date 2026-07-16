@@ -736,22 +736,23 @@ const stickySearchBar = $('sticky-search-bar');
 const stickyInput = $('buscador-sticky');
 const stickyClear = $('clear-sticky');
 
+/* Umbral cacheado: el filtro es estático al inicio, así que su posición
+   inferior no cambia al hacer scroll. Se mide una vez para evitar reflow
+   en cada evento scroll (causa del lag). */
+let filterBottomThreshold = 0;
+const measureThreshold = () => {
+  if (!filtersBar) return;
+  filterBottomThreshold = filtersBar.offsetTop + filtersBar.offsetHeight + 40;
+};
+
 const updateSearchVisibility = () => {
   if (!filtersBar || !stickySearchBar) return;
 
-  const rect = filtersBar.getBoundingClientRect();
-  const filtersBottom = rect.bottom;
-  const shouldShow = window.scrollY > filtersBottom + 40;
+  const shouldShow = window.scrollY > filterBottomThreshold;
 
-  if (shouldShow) {
-    stickySearchBar.classList.add('visible');
-    filtersBar.classList.add('filters-hidden');
-    document.body.classList.add('sticky-search-active');
-  } else {
-    stickySearchBar.classList.remove('visible');
-    filtersBar.classList.remove('filters-hidden');
-    document.body.classList.remove('sticky-search-active');
-  }
+  stickySearchBar.classList.toggle('visible', shouldShow);
+  filtersBar.classList.toggle('filters-hidden', shouldShow);
+  document.body.classList.toggle('sticky-search-active', shouldShow);
 };
 
 if (stickyInput) {
@@ -780,12 +781,20 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
+/* Recalcula el umbral si cambia el tamaño de la ventana */
+window.addEventListener('resize', () => {
+  measureThreshold();
+  updateSearchVisibility();
+}, { passive: true });
+
 /* ── INIT ──────────────────────────────────────────────────── */
 const init = async () => {
   await cargarProductos();
   state.filteredProducts = [...productos];
   buildCarousel();
   applyStateFromURL(); // leer URL al cargar (links compartidos)
+  measureThreshold();   // calcular umbral del filtro una vez cargado el layout
+  updateSearchVisibility();
 };
 
 if (document.readyState === 'loading') {
