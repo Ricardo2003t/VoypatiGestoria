@@ -104,30 +104,52 @@ textarea.admin-input { resize: vertical; }
   margin-top: 16px;
   display: flex;
   gap: 20px;
+  flex-wrap: wrap;
 }
-.admin-check {
+.admin-toggle-wrap {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 120px;
 }
-.admin-check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.admin-toggle-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+.admin-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.admin-toggle-btn {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-secondary);
+  border-radius: 10px;
+  padding: 10px 0;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background .15s, color .15s, border-color .15s;
+  min-height: 44px;
+}
+.admin-toggle-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
 
 @media (max-width: 359px) {
   .admin-row-checks {
     gap: 10px;
     margin-top: 10px;
-    flex-wrap: wrap;
   }
-  .admin-check {
-    font-size: 13px;
-    gap: 6px;
-  }
-  .admin-check input {
-    width: 20px;
-    height: 20px;
-  }
+  .admin-toggle-wrap { min-width: 100px; }
+  .admin-toggle-label { font-size: 12px; }
+  .admin-toggle-btn { font-size: 13px; padding: 9px 0; }
 }
 
 .admin-hint {
@@ -516,10 +538,6 @@ textarea.admin-input { resize: vertical; }
   .admin-row-checks {
     gap: 12px;
     margin-top: 12px;
-  }
-
-  .admin-check {
-    font-size: 13px;
   }
 
   .admin-btn {

@@ -352,6 +352,23 @@ const confirmarBorrado = async producto => {
 };
 
 /* ── FORMULARIO: abrir / cerrar / guardar ──────────────────────── */
+/* Sincroniza los botones toggle (Sí/No) con el input hidden correspondiente */
+const setToggle = (fieldId, value) => {
+  const hidden = $(fieldId);
+  const val = value ? 'true' : 'false';
+  hidden.value = val;
+  document.querySelectorAll(`.admin-toggle-btn[data-field="${fieldId}"]`).forEach(btn => {
+    const active = btn.dataset.val === val;
+    btn.classList.toggle('active', active);
+    btn.setAttribute('aria-pressed', String(active));
+  });
+};
+
+/* Eventos de los toggles Sí/No (Disponible / En oferta) */
+document.querySelectorAll('.admin-toggle-btn').forEach(btn => {
+  btn.addEventListener('click', () => setToggle(btn.dataset.field, btn.dataset.val === 'true'));
+});
+
 const abrirForm = (producto = null) => {
   editandoId = producto?.id ?? null;
   archivoSeleccionado = null;
@@ -364,8 +381,8 @@ const abrirForm = (producto = null) => {
   $('f-precio').value      = producto?.precio ?? '';
   $('f-precio-og').value   = producto?.precio_original ?? '';
   $('f-descripcion').value = producto?.descripcion ?? '';
-  $('f-disponible').checked = producto ? !!producto.disponible : true;
-  $('f-oferta').checked     = producto ? !!producto.oferta : false;
+  setToggle('f-disponible', producto ? !!producto.disponible : true);
+  setToggle('f-oferta',     producto ? !!producto.oferta : false);
   $('f-imagen').value = '';
   $('form-error').hidden = true;
 
@@ -421,8 +438,8 @@ $('producto-form').addEventListener('submit', async e => {
       precio:          Number($('f-precio').value),
       precio_original: $('f-precio-og').value ? Number($('f-precio-og').value) : null,
       descripcion:     $('f-descripcion').value.trim(),
-      disponible:      $('f-disponible').checked,
-      oferta:          $('f-oferta').checked,
+      disponible:      $('f-disponible').value === 'true',
+      oferta:          $('f-oferta').value === 'true',
     };
 
     if (archivoSeleccionado) {

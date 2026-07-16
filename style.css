@@ -548,13 +548,13 @@ button, a, [role="button"] {
 }
 
 /* ── LAYOUT PRINCIPAL ───────────────────────────────────────── */
-/* El filtro es sticky y ya aporta su propio espacio (margin-top) bajo el
-   header, por lo que el main solo necesita un pequeño respiro. */
+/* El filtro estático aporta su propio espacio (margin-top) bajo el header. */
 #main-content {
   padding-top: 0;
 }
 
-/* Ajuste cuando el sticky search reemplaza a los filtros */
+/* Cuando se baja, el filtro se oculta y el buscador sticky (fijo) lo
+   reemplaza; reservamos su altura para que no tape el catálogo. */
 body.sticky-search-active #main-content {
   padding-top: 52px;
 }

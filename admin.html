@@ -110,8 +110,22 @@
     <textarea class="admin-input" id="f-descripcion" rows="4" maxlength="1000"></textarea>
 
     <div class="admin-row admin-row-checks">
-      <label class="admin-check"><input type="checkbox" id="f-disponible" checked /> Disponible</label>
-      <label class="admin-check"><input type="checkbox" id="f-oferta" /> En oferta</label>
+      <div class="admin-toggle-wrap">
+        <span class="admin-toggle-label">Disponible</span>
+        <div class="admin-toggle" role="group" aria-label="Disponible">
+          <button type="button" class="admin-toggle-btn active" data-field="f-disponible" data-val="true" aria-pressed="true">Sí</button>
+          <button type="button" class="admin-toggle-btn" data-field="f-disponible" data-val="false" aria-pressed="false">No</button>
+        </div>
+        <input type="hidden" id="f-disponible" value="true" />
+      </div>
+      <div class="admin-toggle-wrap">
+        <span class="admin-toggle-label">En oferta</span>
+        <div class="admin-toggle" role="group" aria-label="En oferta">
+          <button type="button" class="admin-toggle-btn active" data-field="f-oferta" data-val="true" aria-pressed="true">Sí</button>
+          <button type="button" class="admin-toggle-btn" data-field="f-oferta" data-val="false" aria-pressed="false">No</button>
+        </div>
+        <input type="hidden" id="f-oferta" value="false" />
+      </div>
     </div>
 
     <label class="admin-label" for="f-imagen">Foto del producto</label>
