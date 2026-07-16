@@ -363,20 +363,26 @@ textarea.admin-input { resize: vertical; }
   position: relative;
   flex: 1 1 200px;
   min-width: 0;
+  display: flex;
+  align-items: center;
 }
 
 .admin-search-icon {
-  position: absolute;
-  left: 12px; top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
   width: 16px; height: 16px;
   color: var(--text-muted);
   pointer-events: none;
+  flex-shrink: 0;
+  margin-left: 12px;
+  margin-right: 8px;
 }
 
 .admin-search {
   width: 100%;
-  padding-left: 36px;
+  padding-left: 12px;
 }
 
 .admin-filtro {
