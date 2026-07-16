@@ -150,12 +150,33 @@ const cargarNombreNegocio = async () => {
 };
 
 /* ── PRODUCTOS: leer / crear / editar / borrar ─────────────────── */
+const CATEGORIA_ORDER = ['ferreteria','celulares','transporte','hogar','tecnologia','electrodomesticos','deportivos'];
+
 const cargarProductos = async () => {
   const res = await authFetch(
     `${SUPABASE_URL}/rest/v1/productos?select=*&cliente_id=eq.${session.uid}&order=created_at.desc`
   );
   if (!res.ok) throw new Error('No se pudieron cargar los productos');
-  productos = await res.json();
+  const text = await res.text();
+  let data = [];
+  try { data = JSON.parse(text); } catch { throw new Error('Respuesta inválida del servidor'); }
+  productos = data.map(row => ({
+    id: row.id,
+    categoria: row.categoria,
+    nombre: row.nombre,
+    precio: Number(row.precio),
+    precio_original: row.precio_original != null ? Number(row.precio_original) : null,
+    imagen_url: row.imagen_url || '',
+    descripcion: row.descripcion || '',
+    oferta: !!row.oferta,
+    disponible: row.disponible !== false,
+  }));
+  productos.sort((a, b) => {
+    const ca = CATEGORIA_ORDER.indexOf(a.categoria);
+    const cb = CATEGORIA_ORDER.indexOf(b.categoria);
+    if (ca !== cb) return ca - cb;
+    return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+  });
 };
 
 const crearProducto = async payload => {

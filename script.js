@@ -75,6 +75,8 @@ const mapProducto = row => ({
 /* Trae el catálogo del cliente de este deploy (CLIENTE_ID, ver supabase-config.js).
    Si falla (sin señal, Supabase caído, etc.) usa el último catálogo guardado
    en localStorage para que el sitio nunca se quede en blanco. */
+const CATEGORIA_ORDER = ['ferreteria','celulares','transporte','hogar','tecnologia','electrodomesticos','deportivos'];
+
 const cargarProductos = async () => {
   const url =
     `${SUPABASE_URL}/rest/v1/productos?select=*` +
@@ -95,6 +97,12 @@ const cargarProductos = async () => {
     const data = await res.json();
     console.log('[index] cargarProductos count:', data.length);
     productos = data.map(mapProducto);
+    productos.sort((a, b) => {
+      const ca = CATEGORIA_ORDER.indexOf(a.categoria);
+      const cb = CATEGORIA_ORDER.indexOf(b.categoria);
+      if (ca !== cb) return ca - cb;
+      return a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' });
+    });
     try { localStorage.setItem(CACHE_KEY, JSON.stringify(productos)); } catch (e) { console.warn('[index] localStorage setItem failed:', e); }
   } catch (err) {
     console.error('[index] cargarProductos fallback:', err.message);
@@ -744,31 +752,22 @@ if (btnApple && isIOS) {
   btnApple.href = 'maps://?q=VoypatiGestoria&ll=23.076917,-82.429631&z=16';
 }
 
-/* ── SCROLL: ocultar filtros y mostrar buscador sticky ───────── */
+/* ── SCROLL: mostrar buscador sticky al bajar del filtro ─────── */
 const filtersBar = $('filters-bar');
 const stickySearchBar = $('sticky-search-bar');
-const catalogoSection = $('catalogo-section');
 const stickyInput = $('buscador-sticky');
 const stickyClear = $('clear-sticky');
 
-const syncStickySearch = valor => {
-  if (stickyInput) stickyInput.value = valor;
-  if (stickyClear) stickyClear.hidden = !valor;
-};
-
 const updateSearchVisibility = () => {
-  if (!filtersBar || !stickySearchBar || !catalogoSection) return;
+  if (!filtersBar || !stickySearchBar) return;
 
-  const rect = catalogoSection.getBoundingClientRect();
-  const filtersHeight = filtersBar.offsetHeight;
-  const shouldShowSticky = rect.top <= filtersHeight + 10 && rect.bottom > filtersHeight + 50;
+  const filtersBottom = filtersBar.offsetTop + filtersBar.offsetHeight;
+  const shouldShow = window.scrollY > filtersBottom - 10;
 
-  if (shouldShowSticky) {
-    filtersBar.classList.add('hidden-by-search');
+  if (shouldShow) {
     stickySearchBar.classList.add('visible');
     document.body.classList.add('sticky-search-active');
   } else {
-    filtersBar.classList.remove('hidden-by-search');
     stickySearchBar.classList.remove('visible');
     document.body.classList.remove('sticky-search-active');
   }

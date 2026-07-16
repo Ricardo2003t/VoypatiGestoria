@@ -399,33 +399,30 @@ button, a, [role="button"] {
 
 /* ── FILTROS STICKY ─────────────────────────────────────────── */
 #filters-bar {
-  position: sticky;
-  top: calc(var(--header-h) + var(--sat));
-  z-index: 90;
+  position: relative;
+  z-index: 1;
   background: rgba(255,250,245,.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
 }
 
-#filters-bar.hidden-by-search {
-  display: none;
-}
-
-/* ── BUSCADOR STICKY (reemplaza filtros al hacer scroll) ──────── */
+/* ── BUSCADOR STICKY (aparece al bajar del filtro estático) ──────── */
 .sticky-search-bar {
-  position: sticky;
+  position: fixed;
   top: calc(var(--header-h) + var(--sat));
+  left: 0; right: 0;
   z-index: 89;
   background: rgba(255,250,245,.98);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 8px 14px;
-  display: none;
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .2s ease, opacity .2s ease;
 }
 .sticky-search-bar.visible {
-  display: block;
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
 }
 .sticky-search-bar .search-wrap {
   display: flex;
