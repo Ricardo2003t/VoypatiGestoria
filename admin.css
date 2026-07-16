@@ -103,53 +103,85 @@ textarea.admin-input { resize: vertical; }
 .admin-row-checks {
   margin-top: 16px;
   display: flex;
-  gap: 20px;
+  gap: 16px;
   flex-wrap: wrap;
 }
-.admin-toggle-wrap {
+/* Checkbox personalizado: cuadro que se marca/desmarca (funciona en móvil) */
+.admin-check {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   flex: 1;
-  min-width: 120px;
-}
-.admin-toggle-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-secondary);
-}
-.admin-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-.admin-toggle-btn {
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-secondary);
-  border-radius: 10px;
-  padding: 10px 0;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background .15s, color .15s, border-color .15s;
+  min-width: 130px;
   min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: border-color .15s, background .15s;
 }
-.admin-toggle-btn.active {
+.admin-check:active { background: var(--bg-elevated); }
+/* Oculta el checkbox nativo pero conserva accesibilidad/foco */
+.admin-check input {
+  position: absolute;
+  opacity: 0;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0,0,0,0);
+}
+/* Cuadro visual */
+.admin-check-box {
+  position: relative;
+  width: 24px; height: 24px;
+  flex-shrink: 0;
+  border: 2px solid var(--border-strong);
+  border-radius: 7px;
+  background: var(--bg-card);
+  transition: background .15s, border-color .15s;
+}
+.admin-check-box::after {
+  content: '';
+  position: absolute;
+  left: 8px; top: 4px;
+  width: 6px; height: 11px;
+  border: solid #fff;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform .15s var(--ease, cubic-bezier(.32,.72,0,1));
+}
+.admin-check input:checked + .admin-check-box {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
 }
+.admin-check input:checked + .admin-check-box::after {
+  transform: rotate(45deg) scale(1);
+}
+/* Foco visible para teclado/accesibilidad */
+.admin-check input:focus-visible + .admin-check-box {
+  outline: 2.5px solid var(--accent);
+  outline-offset: 3px;
+}
+.admin-check-text { line-height: 1; }
 
 @media (max-width: 359px) {
   .admin-row-checks {
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 12px;
   }
-  .admin-toggle-wrap { min-width: 100px; }
-  .admin-toggle-label { font-size: 12px; }
-  .admin-toggle-btn { font-size: 13px; padding: 9px 0; }
+  .admin-check {
+    font-size: 13px;
+    min-width: 120px;
+    padding: 7px 10px;
+    gap: 8px;
+  }
+  .admin-check-box { width: 22px; height: 22px; }
 }
 
 .admin-hint {
