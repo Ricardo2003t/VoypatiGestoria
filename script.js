@@ -640,6 +640,10 @@ const buildCarousel = () => {
 let scrollY = 0;
 const lockScroll = () => {
   scrollY = window.scrollY;
+  const spacer = document.createElement('div');
+  spacer.id = 'scroll-spacer';
+  spacer.style.height = `${document.body.scrollHeight}px`;
+  document.body.appendChild(spacer);
   document.body.style.position = 'fixed';
   document.body.style.top = `-${scrollY}px`;
   document.body.style.left = '0';
@@ -648,22 +652,21 @@ const lockScroll = () => {
   document.body.classList.add('modal-open');
 };
 const unlockScroll = () => {
-  const y = scrollY;
-  /* Desactivamos scroll-behavior temporalmente para que el scrollTo
-     sea instantáneo y ocurra en el mismo frame de pintado que la
-     eliminación del position:fixed, evitando cualquier salto visual. */
-  const html = document.documentElement;
-  const prevBehavior = html.style.scrollBehavior;
-  html.style.scrollBehavior = 'auto';
+  const spacer = document.getElementById('scroll-spacer');
+  if (spacer) spacer.remove();
+  document.documentElement.style.scrollBehavior = 'auto';
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.left = '';
   document.body.style.right = '';
   document.body.style.overflow = '';
   document.body.classList.remove('modal-open');
-  window.scrollTo(0, y);
-  /* Restauramos el comportamiento de scroll original */
-  html.style.scrollBehavior = prevBehavior;
+  window.scrollTo(0, scrollY);
+  setTimeout(() => window.scrollTo(0, scrollY), 0);
+  setTimeout(() => window.scrollTo(0, scrollY), 150);
+  setTimeout(() => {
+    document.documentElement.style.scrollBehavior = '';
+  }, 300);
 };
 let modalTouchStartX = 0;
 
@@ -725,16 +728,23 @@ const openModal = p => {
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   lockScroll();
-
-  setTimeout(() => $('modal').focus(), 50);
 };
 
 const closeModal = () => {
   const overlay = $('modal-overlay');
   overlay.classList.remove('open');
   overlay.setAttribute('aria-hidden', 'true');
-  unlockScroll();
   state.modalProduct = null;
+
+  const restore = () => {
+    unlockScroll();
+    overlay.removeEventListener('transitionend', restore);
+  };
+  overlay.addEventListener('transitionend', restore);
+  setTimeout(() => {
+    overlay.removeEventListener('transitionend', restore);
+    unlockScroll();
+  }, 400);
 };
 
 $('modal-close').addEventListener('click', closeModal);
