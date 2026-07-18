@@ -710,6 +710,10 @@ const openModal = p => {
   overlay.classList.add('open');
   overlay.setAttribute('aria-hidden', 'false');
   lockScroll();
+  /* Agregamos un estado al historial para interceptar el botón de
+     retroceso del móvil. Al presionar "atrás", popstate cerrará el
+     modal en lugar de salir de la página. */
+  history.pushState({ modal: true }, '');
 };
 
 const closeModal = () => {
@@ -734,9 +738,6 @@ const closeModal = () => {
     }
   }, 400);
 
-  if (history.state?.modal) {
-    history.back();
-  }
 };
 
 $('modal-close').addEventListener('click', closeModal);
