@@ -474,18 +474,23 @@ $('f-imagen').addEventListener('change', e => {
 });
 
 $('btn-nuevo').addEventListener('click', () => { if (requireSession()) abrirForm(); });
-$('form-close').addEventListener('click', cerrarForm);
-$('form-cancel').addEventListener('click', cerrarForm);
+$('form-close').addEventListener('click', () => history.back());
+$('form-cancel').addEventListener('click', () => history.back());
 $('form-overlay').addEventListener('click', e => {
-  if (e.target === $('form-overlay')) cerrarForm();
+  if (e.target === $('form-overlay')) history.back();
 });
 
-// Evita que el modal (tarjeta) provoque saltos/bounce al usar el botón
-// “Atrás”/historial en móviles: si hay popstate y el modal está abierto,
-// lo cerramos sin recargar la página.
+// Intercepta el botón de retroceso del móvil: si el formulario está
+// abierto, lo cierra y restaura la posición donde estábamos.
 window.addEventListener('popstate', () => {
   const overlay = $('form-overlay');
-  if (overlay && !overlay.hidden) cerrarForm();
+  if (overlay && !overlay.hidden) {
+    overlay.hidden = true;
+    editandoId = null;
+    archivoSeleccionado = null;
+    imagenUrlOriginal = null;
+    unlockScroll();
+  }
 });
 
 /* ── BÚSQUEDA Y FILTRO DEL PANEL ───────────────────────────── */
