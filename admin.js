@@ -478,7 +478,17 @@ $('f-imagen').addEventListener('change', e => {
 $('btn-nuevo').addEventListener('click', () => { if (requireSession()) abrirForm(); });
 $('form-close').addEventListener('click', cerrarForm);
 $('form-cancel').addEventListener('click', cerrarForm);
-$('form-overlay').addEventListener('click', e => { if (e.target === $('form-overlay')) cerrarForm(); });
+$('form-overlay').addEventListener('click', e => {
+  if (e.target === $('form-overlay')) cerrarForm();
+});
+
+// Evita que el modal (tarjeta) provoque saltos/bounce al usar el botón
+// “Atrás”/historial en móviles: si hay popstate y el modal está abierto,
+// lo cerramos sin recargar la página.
+window.addEventListener('popstate', () => {
+  const overlay = $('form-overlay');
+  if (overlay && !overlay.hidden) cerrarForm();
+});
 
 /* ── BÚSQUEDA Y FILTRO DEL PANEL ───────────────────────────── */
 let adminSearchTimer;

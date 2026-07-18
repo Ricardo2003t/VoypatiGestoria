@@ -8,4 +8,4 @@ git add "Piezas\Peugeot\Radiador 106 .webp"             / ejemplo de agregar fot
 
 git rm "Piezas\Peugeot\Vieleta Suspension 406.webp"     / Eliminar foto 
 git commit -m "Eliminar foto del repositorio"
-git push origin main
+git push origin main 

@@ -648,13 +648,22 @@ const lockScroll = () => {
   document.body.classList.add('modal-open');
 };
 const unlockScroll = () => {
+  const y = scrollY;
+  /* Desactivamos scroll-behavior temporalmente para que el scrollTo
+     sea instantáneo y ocurra en el mismo frame de pintado que la
+     eliminación del position:fixed, evitando cualquier salto visual. */
+  const html = document.documentElement;
+  const prevBehavior = html.style.scrollBehavior;
+  html.style.scrollBehavior = 'auto';
   document.body.style.position = '';
   document.body.style.top = '';
   document.body.style.left = '';
   document.body.style.right = '';
   document.body.style.overflow = '';
   document.body.classList.remove('modal-open');
-  window.scrollTo(0, scrollY);
+  window.scrollTo(0, y);
+  /* Restauramos el comportamiento de scroll original */
+  html.style.scrollBehavior = prevBehavior;
 };
 let modalTouchStartX = 0;
 
