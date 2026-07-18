@@ -35,18 +35,12 @@ let filtroCategoria = 'todos';
 /* ── SCROLL LOCK iOS/Android ───────────────────────────────── */
 const lockScroll = () => {
   scrollY = window.scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
+  document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
   document.body.classList.add('admin-modal-open');
 };
 const unlockScroll = () => {
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
   document.body.classList.remove('admin-modal-open');
   window.scrollTo(0, scrollY);
@@ -455,6 +449,10 @@ const abrirForm = (producto = null) => {
 
   $('form-overlay').hidden = false;
   lockScroll();
+  /* Agregamos un estado al historial para interceptar el botón de
+     retroceso del móvil. Al presionar "atrás", popstate cerrará el
+     formulario en lugar de salir de la página. */
+  history.pushState({ formOpen: true }, '');
 };
 
 const cerrarForm = () => {
