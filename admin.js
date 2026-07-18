@@ -474,22 +474,25 @@ $('f-imagen').addEventListener('change', e => {
 });
 
 $('btn-nuevo').addEventListener('click', () => { if (requireSession()) abrirForm(); });
-$('form-close').addEventListener('click', () => history.back());
-$('form-cancel').addEventListener('click', () => history.back());
+$('form-close').addEventListener('click', cerrarForm);
+$('form-cancel').addEventListener('click', cerrarForm);
 $('form-overlay').addEventListener('click', e => {
-  if (e.target === $('form-overlay')) history.back();
+  if (e.target === $('form-overlay')) cerrarForm();
 });
 
 // Intercepta el botón de retroceso del móvil: si el formulario está
-// abierto, lo cierra y restaura la posición donde estábamos.
+// abierto, lo cerramos y nos quedamos en la misma página.
+// Si NO está abierto, no hacemos nada (permitimos la navegación normal).
+let popstateGuard = false;
 window.addEventListener('popstate', () => {
+  if (popstateGuard) { popstateGuard = false; return; }
   const overlay = $('form-overlay');
   if (overlay && !overlay.hidden) {
-    overlay.hidden = true;
-    editandoId = null;
-    archivoSeleccionado = null;
-    imagenUrlOriginal = null;
-    unlockScroll();
+    /* El usuario presionó "atrás" mientras el formulario estaba abierto.
+       Cerramos el formulario y volvemos a pushState para no salir de la página. */
+    cerrarForm();
+    popstateGuard = true;
+    history.pushState({ formOpen: true }, '');
   }
 });
 
