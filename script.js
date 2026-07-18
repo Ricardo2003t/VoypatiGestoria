@@ -859,7 +859,17 @@ $('mobile-menu').querySelectorAll('.menu-link').forEach(l =>
 /* ── BACK BUTTON / POPSTATE ────────────────────────────────── */
 window.addEventListener('popstate', () => {
   if ($('modal-overlay').classList.contains('open')) {
-    closeModal();
+    /* Cerramos el modal y restauramos el scroll INMEDIATAMENTE,
+       sin esperar transiciones CSS, para que el botón de retroceso
+       del móvil nos devuelva exactamente a donde estábamos. */
+    const overlay = $('modal-overlay');
+    overlay.classList.remove('open');
+    overlay.setAttribute('aria-hidden', 'true');
+    state.modalProduct = null;
+    unlockScroll();
+    if (state.lastFocusedCard && typeof state.lastFocusedCard.focus === 'function') {
+      state.lastFocusedCard.focus({ preventScroll: true });
+    }
     return;
   }
   applyStateFromURL();
