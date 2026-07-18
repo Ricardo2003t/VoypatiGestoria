@@ -123,6 +123,7 @@ const state = {
   showSeparators:   false,
   modalProduct:     null,
   modalImgIdx:      0,
+  lastFocusedCard:  null,
 };
 
 /* ── REFS DOM ──────────────────────────────────────────────── */
@@ -636,43 +637,24 @@ const buildCarousel = () => {
   );
 };
 
-/* ── SCROLL LOCK iOS/Android ──────────────────────────────── */
-let scrollY = 0;
 const lockScroll = () => {
   scrollY = window.scrollY;
-  const spacer = document.createElement('div');
-  spacer.id = 'scroll-spacer';
-  spacer.style.height = `${document.body.scrollHeight}px`;
-  document.body.appendChild(spacer);
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.left = '0';
-  document.body.style.right = '0';
+  document.documentElement.style.overflow = 'hidden';
   document.body.style.overflow = 'hidden';
   document.body.classList.add('modal-open');
 };
 const unlockScroll = () => {
-  const spacer = document.getElementById('scroll-spacer');
-  if (spacer) spacer.remove();
-  document.documentElement.style.scrollBehavior = 'auto';
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.left = '';
-  document.body.style.right = '';
+  document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
   document.body.classList.remove('modal-open');
   window.scrollTo(0, scrollY);
-  setTimeout(() => window.scrollTo(0, scrollY), 0);
-  setTimeout(() => window.scrollTo(0, scrollY), 150);
-  setTimeout(() => {
-    document.documentElement.style.scrollBehavior = '';
-  }, 300);
 };
 let modalTouchStartX = 0;
 
 const openModal = p => {
   state.modalProduct = p;
   state.modalImgIdx  = 0;
+  state.lastFocusedCard = document.activeElement;
 
   $('modal-img').src = p.imagenes[0];
   $('modal-img').alt = p.nombre;
@@ -738,13 +720,23 @@ const closeModal = () => {
 
   const restore = () => {
     unlockScroll();
+    if (state.lastFocusedCard && typeof state.lastFocusedCard.focus === 'function') {
+      state.lastFocusedCard.focus({ preventScroll: true });
+    }
     overlay.removeEventListener('transitionend', restore);
   };
   overlay.addEventListener('transitionend', restore);
   setTimeout(() => {
     overlay.removeEventListener('transitionend', restore);
     unlockScroll();
+    if (state.lastFocusedCard && typeof state.lastFocusedCard.focus === 'function') {
+      state.lastFocusedCard.focus({ preventScroll: true });
+    }
   }, 400);
+
+  if (history.state?.modal) {
+    history.back();
+  }
 };
 
 $('modal-close').addEventListener('click', closeModal);

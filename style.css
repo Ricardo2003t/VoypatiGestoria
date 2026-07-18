@@ -1490,8 +1490,6 @@ img, .p-card-img, .c-card-img, #modal-img,
 body.menu-open,
 body.modal-open {
   overflow: hidden;
-  position: fixed;
-  left: 0; right: 0;
 }
 /* Ancho fijo para iOS al usar position:fixed, evita layout shift */
 @media (max-width: 640px) {
