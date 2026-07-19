@@ -499,19 +499,6 @@ $('form-overlay').addEventListener('click', e => {
   if (e.target === $('form-overlay')) cerrarForm();
 });
 
-// Intercepta el botón de retroceso del móvil: si el formulario está
-// abierto, lo cerramos y nos quedamos en la misma página.
-// Si NO está abierto, no hacemos nada (permitimos la navegación normal).
-let popstateGuard = false;
-window.addEventListener('popstate', () => {
-  if (popstateGuard) { popstateGuard = false; return; }
-  const overlay = $('form-overlay');
-  if (overlay && !overlay.hidden) {
-    popstateGuard = true;
-    cerrarForm();
-  }
-});
-
 /* ── BÚSQUEDA Y FILTRO DEL PANEL ───────────────────────────── */
 let adminSearchTimer;
 $('admin-buscar').addEventListener('input', e => {
