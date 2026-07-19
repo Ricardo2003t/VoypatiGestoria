@@ -647,7 +647,18 @@ const unlockScroll = () => {
   document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
   document.body.classList.remove('modal-open');
-  window.scrollTo(0, scrollY);
+  
+  const restore = () => {
+    window.scrollTo({ top: scrollY, behavior: 'instant' });
+    document.documentElement.scrollTop = scrollY;
+    document.body.scrollTop = scrollY;
+  };
+  
+  requestAnimationFrame(() => {
+    restore();
+    setTimeout(restore, 50);
+    setTimeout(restore, 200);
+  });
 };
 let modalTouchStartX = 0;
 
