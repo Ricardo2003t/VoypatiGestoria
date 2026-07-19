@@ -43,7 +43,18 @@ const unlockScroll = () => {
   document.documentElement.style.overflow = '';
   document.body.style.overflow = '';
   document.body.classList.remove('admin-modal-open');
-  window.scrollTo(0, scrollY);
+  
+  const restore = () => {
+    window.scrollTo({ top: scrollY, behavior: 'instant' });
+    document.documentElement.scrollTop = scrollY;
+    document.body.scrollTop = scrollY;
+  };
+  
+  requestAnimationFrame(() => {
+    restore();
+    setTimeout(restore, 50);
+    setTimeout(restore, 200);
+  });
 };
 
 /* ── TOAST ──────────────────────────────────────────────────── */
@@ -455,12 +466,20 @@ const abrirForm = (producto = null) => {
   history.pushState({ formOpen: true }, '');
 };
 
+let popstateGuard = false;
 const cerrarForm = () => {
+  if (popstateGuard) { popstateGuard = false; return; }
+  
   $('form-overlay').hidden = true;
   editandoId = null;
   archivoSeleccionado = null;
   imagenUrlOriginal = null;
   unlockScroll();
+
+  if (history.state?.formOpen) {
+    popstateGuard = true;
+    history.back();
+  }
 };
 
 $('f-imagen').addEventListener('change', e => {
@@ -488,11 +507,8 @@ window.addEventListener('popstate', () => {
   if (popstateGuard) { popstateGuard = false; return; }
   const overlay = $('form-overlay');
   if (overlay && !overlay.hidden) {
-    /* El usuario presionó "atrás" mientras el formulario estaba abierto.
-       Cerramos el formulario y volvemos a pushState para no salir de la página. */
-    cerrarForm();
     popstateGuard = true;
-    history.pushState({ formOpen: true }, '');
+    cerrarForm();
   }
 });
 
@@ -631,3 +647,4 @@ const init = () => {
 };
 
 init();
+
